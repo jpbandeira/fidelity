@@ -1,11 +1,13 @@
 package config
 
+import "github.com/jp/fidelity/internal/infra/platform"
+
 type ServerConfig struct {
-	Server Server `yaml:"server"`
-	// Platform     platform.Type `yaml:"platform"`
-	DatabaseType string    `yaml:"database_type"`
-	Postgres     Postgres  `yaml:"postgres"`
-	Log          LogConfig `yaml:"log"`
+	Server       Server        `yaml:"server"`
+	Platform     platform.Type `yaml:"platform"`
+	DatabaseType string        `yaml:"database_type"`
+	Postgres     Postgres      `yaml:"postgres"`
+	Log          LogConfig     `yaml:"log"`
 }
 
 // Server defines the host address
