@@ -1,0 +1,17 @@
+server:
+  host: localhost
+  port: 9901
+
+log:
+  level: "debug"
+
+platform: "dev-env"
+database_type: "postgres"
+
+postgres:
+  username: "postgres"
+  password: "love"
+  host: "localhost"
+  port: "5432"
+  database: "fidelity"
+  sslmode: "disable" 
