@@ -26,9 +26,9 @@ func (a actions) UpdateUser(user User) (User, error) {
 }
 
 func (a actions) ListUsers() ([]User, error) {
-	return []User{}, nil
+	return a.db.ListUsers()
 }
 
-func (a actions) DeleteUser(string) error {
-	return nil
+func (a actions) DeleteUser(id string) error {
+	return a.db.DeleteUser(id)
 }

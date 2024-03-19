@@ -1,7 +1,9 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
@@ -64,10 +66,26 @@ func (h *handler) updateUser(c *gin.Context) {
 
 // listUser - List a list of User
 func (h *handler) listUser(c *gin.Context) {
-	c.JSON(http.StatusOK, []apimodel.User{})
+	users, err := h.actions.ListUsers()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	}
+
+	c.JSON(http.StatusOK, users)
 }
 
 // deleteUser - Delete a User
 func (h *handler) deleteUser(c *gin.Context) {
+	id := c.Param(idParam)
+	if len(strings.TrimSpace(id)) == 0 {
+		c.JSON(http.StatusBadRequest, fmt.Errorf("empty id"))
+		return
+	}
+
+	err := h.actions.DeleteUser(id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	}
+
 	c.JSON(http.StatusNoContent, nil)
 }

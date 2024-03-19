@@ -71,10 +71,10 @@ func (db *GormRepository) getUser(tx *gorm.DB, uuid string) (model.User, error) 
 	return user, nil
 }
 
-func (db *GormRepository) ListUsers(user domain.User) ([]domain.User, error) {
+func (db *GormRepository) ListUsers() ([]domain.User, error) {
 	var users []model.User
 
-	err := db.Where(&user).Find(&users).Error
+	err := db.Find(&users).Error
 	if err != nil {
 		return []domain.User{}, err
 	}
@@ -88,7 +88,7 @@ func (db *GormRepository) ListUsers(user domain.User) ([]domain.User, error) {
 }
 
 func (db *GormRepository) DeleteUser(uuid string) error {
-	tx := db.Unscoped().Delete(&model.User{UUID: uuid})
+	tx := db.Unscoped().Where(&model.User{UUID: uuid}).Delete(&model.User{})
 	if tx.Error != nil {
 		return tx.Error
 	}
