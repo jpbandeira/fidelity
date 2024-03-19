@@ -1,6 +1,10 @@
 package config
 
-import "github.com/jp/fidelity/internal/infra/platform"
+import (
+	"fmt"
+
+	"github.com/jp/fidelity/internal/infra/platform"
+)
 
 type ServerConfig struct {
 	Server       Server        `yaml:"server"`
@@ -25,6 +29,15 @@ type Postgres struct {
 	Port     string `yaml:"port"`
 	Database string `yaml:"database"`
 	SSLMode  string `yaml:"sslmode"`
+}
+
+// DSN returns data source name for connection string from Postgres configuration.
+func (p *Postgres) DSN() string {
+	if len(p.Password) == 0 {
+		return fmt.Sprintf("host=%s port=%s user=%s dbname=%s sslmode=%s", p.Host, p.Port, p.Username, p.Database, p.SSLMode)
+	}
+
+	return fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", p.Host, p.Port, p.Username, p.Password, p.Database, p.SSLMode)
 }
 
 // LogConfig represents the logger configuration
