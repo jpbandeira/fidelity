@@ -30,7 +30,7 @@ var (
 
 func databaseModels() []interface{} {
 	return []interface{}{
-		models.Client{},
+		models.Person{},
 	}
 }
 

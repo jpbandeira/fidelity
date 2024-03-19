@@ -3,7 +3,7 @@ package domain
 import "context"
 
 type Actions interface {
-	CreateClient(context.Context, Client) (Client, error)
+	CreatePerson(context.Context, Person) (Person, error)
 }
 
 type actions struct {

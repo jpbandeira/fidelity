@@ -9,16 +9,16 @@ import (
 const (
 	baseEP string = "/fidelity"
 
-	clientsEP string = baseEP + "/clients"
+	personsEP string = baseEP + "/persons"
 )
 
 func (h *handler) featureEndpointExampleRoutes() Routes {
 	return Routes{
 		{
-			Name:        "CreateClient",
+			Name:        "CreatePerson",
 			Method:      http.MethodPost,
-			Pattern:     clientsEP,
-			HandlerFunc: h.createClient,
+			Pattern:     personsEP,
+			HandlerFunc: h.createPerson,
 		},
 	}
 }
