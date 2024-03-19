@@ -12,7 +12,7 @@ import (
 	"github.com/jp/fidelity/internal/config"
 	"github.com/jp/fidelity/internal/infra/database"
 	"github.com/jp/fidelity/internal/infra/platform"
-	"github.com/jp/fidelity/internal/repository/models"
+	"github.com/jp/fidelity/internal/repository/model"
 )
 
 // GormRepository contains the reference to the gorm DB definition and configuration
@@ -30,7 +30,7 @@ var (
 
 func databaseModels() []interface{} {
 	return []interface{}{
-		models.Person{},
+		model.User{},
 	}
 }
 

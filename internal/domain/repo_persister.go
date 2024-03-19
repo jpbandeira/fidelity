@@ -1,7 +1,8 @@
 package domain
 
-import "context"
-
 type RepoPersister interface {
-	CreatePerson(context.Context, Person) (Person, error)
+	CreateUser(User) (User, error)
+	UpdateUser(User) (User, error)
+	ListUsers(User) ([]User, error)
+	DeleteUser(string) error
 }

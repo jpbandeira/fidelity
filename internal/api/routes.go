@@ -7,18 +7,39 @@ import (
 )
 
 const (
+	idParam string = "id"
+
 	baseEP string = "/fidelity"
 
-	personsEP string = baseEP + "/persons"
+	userEP       string = baseEP + "/users"
+	singleUserEP string = userEP + "/:" + idParam
 )
 
-func (h *handler) featureEndpointExampleRoutes() Routes {
+func (h *handler) userRoutes() Routes {
 	return Routes{
 		{
-			Name:        "CreatePerson",
+			Name:        "CreateUser",
 			Method:      http.MethodPost,
-			Pattern:     personsEP,
-			HandlerFunc: h.createPerson,
+			Pattern:     userEP,
+			HandlerFunc: h.createUser,
+		},
+		{
+			Name:        "UpdateUser",
+			Method:      http.MethodPut,
+			Pattern:     userEP,
+			HandlerFunc: h.updateUser,
+		},
+		{
+			Name:        "ListUser",
+			Method:      http.MethodGet,
+			Pattern:     userEP,
+			HandlerFunc: h.listUser,
+		},
+		{
+			Name:        "DeleteUser",
+			Method:      http.MethodDelete,
+			Pattern:     singleUserEP,
+			HandlerFunc: h.deleteUser,
 		},
 	}
 }
@@ -26,7 +47,7 @@ func (h *handler) featureEndpointExampleRoutes() Routes {
 // Routes builds the server endpoint route to handlers
 func (h *handler) Routes() Routes {
 	rts := Routes{}
-	rts = append(rts, h.featureEndpointExampleRoutes()...)
+	rts = append(rts, h.userRoutes()...)
 
 	return rts
 }

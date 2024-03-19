@@ -26,8 +26,8 @@ func defaultGormLogger() gormlogger.Interface {
 }
 
 // ProvideGORMDatabase provides am instance of *gorm.DB that contains database connection.
-func ProvideGORMDatabase(dbDialect gorm.Dialector, models []interface{}) (*gorm.DB, error) {
-	if len(models) == 0 {
+func ProvideGORMDatabase(dbDialect gorm.Dialector, model []interface{}) (*gorm.DB, error) {
+	if len(model) == 0 {
 		return nil, errNoModelDefined
 	}
 
@@ -39,7 +39,7 @@ func ProvideGORMDatabase(dbDialect gorm.Dialector, models []interface{}) (*gorm.
 		return nil, err
 	}
 
-	err = db.AutoMigrate(models...)
+	err = db.AutoMigrate(model...)
 	if err != nil {
 		return nil, err
 	}

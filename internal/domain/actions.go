@@ -1,9 +1,10 @@
 package domain
 
-import "context"
-
 type Actions interface {
-	CreatePerson(context.Context, Person) (Person, error)
+	CreateUser(User) (User, error)
+	UpdateUser(User) (User, error)
+	ListUsers() ([]User, error)
+	DeleteUser(string) error
 }
 
 type actions struct {
