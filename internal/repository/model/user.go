@@ -23,7 +23,7 @@ func (p User) RepoToDomain() domain.User {
 	}
 }
 
-func DomainToRepo(p domain.User) User {
+func UserDomainToRepo(p domain.User) User {
 	return User{
 		UUID:  p.ID,
 		Name:  p.Name,
