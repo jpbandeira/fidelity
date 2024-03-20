@@ -1,40 +1,59 @@
 package repository
 
 import (
+	"github.com/google/uuid"
 	"github.com/jp/fidelity/internal/domain"
 	"github.com/jp/fidelity/internal/repository/model"
 	"gorm.io/gorm"
 )
 
-func (db *GormRepository) CreateService(service model.Service) (domain.Service, error) {
-	serviceModel := model.Service{}
+func (db *GormRepository) CreateService(service domain.Service) (domain.Service, error) {
+	var serviceModel model.Service
 
 	err := db.Transaction(func(tx *gorm.DB) error {
-		err := db.Create(&serviceModel).Error
+		client, err := db.getUser(tx, service.Client.ID)
 		if err != nil {
 			return err
 		}
 
-		// // clientServiceCount, err := getServiceCountByClientIDAndSerciceType()
-		// caso o erro seja not found, deve pular o IF abaixo
-		// caso não seja not found mas é algum erro de execução, o erro deve ser retornado
-		// no caso de não ter nenhum erro é porque encontrou e deve ser atualizado
-		// if err != nil && err != "not found" {
-		// 	return err
-		// }
+		attendant, err := db.getUser(tx, service.Attendant.ID)
+		if err != nil {
+			return err
+		}
 
-		// if err != "not found" {
-		// 	clientServiceCount.ServiceCount++
-		// 	err := tx.
-		// 		Session(&gorm.Session{FullSaveAssociations: true}).
-		// 		Select("*").
-		// 		Updates(&oldUser).Error
-		// 	if err != nil {
-		// 		return t.Error
-		// 	}
+		serviceModel = model.Service{
+			UUID:        uuid.NewString(),
+			ClientID:    client.ID,
+			AttedantID:  attendant.ID,
+			Price:       service.Price,
+			ServiceType: service.ServiceType,
+			PaymentType: service.PaymentType,
+			Description: service.Description,
+		}
 
-		// return nil
-		// }
+		err = db.Create(&serviceModel).Error
+		if err != nil {
+			return err
+		}
+
+		clientServiceCount, err := db.getClientServiceCount(tx, serviceModel.ClientID, serviceModel.ServiceType)
+		if err != nil && err != domain.ErrNotFound {
+			return err
+		}
+
+		if clientServiceCount.ClientID != 0 {
+			clientServiceCount.ServiceCount = clientServiceCount.ServiceCount + 1
+			err := tx.
+				Session(&gorm.Session{FullSaveAssociations: true}).
+				Select("*").
+				Where("client_id = ? AND service_type = ?", clientServiceCount.ClientID, clientServiceCount.ServiceType).
+				Updates(&clientServiceCount).Error
+			if err != nil {
+				return err
+			}
+
+			return nil
+		}
 
 		clientServiceCountModel := model.ClientServiceCount{
 			ServiceType:  serviceModel.ServiceType,
@@ -54,4 +73,17 @@ func (db *GormRepository) CreateService(service model.Service) (domain.Service, 
 	}
 
 	return serviceModel.RepoToDomain(), nil
+}
+
+func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendID uint, serviceType uint) (model.ClientServiceCount, error) {
+	var clientServiceCount model.ClientServiceCount
+	err := tx.Where("client_id = ? AND service_type = ?", cliendID, serviceType).Find(&clientServiceCount).Error
+	if err != nil {
+		return model.ClientServiceCount{}, err
+	}
+	if clientServiceCount.ClientID == 0 {
+		return model.ClientServiceCount{}, domain.ErrNotFound
+	}
+
+	return clientServiceCount, nil
 }

@@ -5,6 +5,8 @@ type Actions interface {
 	UpdateUser(User) (User, error)
 	ListUsers() ([]User, error)
 	DeleteUser(string) error
+
+	CreateService(service Service) (Service, error)
 }
 
 type actions struct {

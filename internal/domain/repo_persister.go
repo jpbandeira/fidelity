@@ -5,4 +5,6 @@ type RepoPersister interface {
 	UpdateUser(User) (User, error)
 	ListUsers() ([]User, error)
 	DeleteUser(string) error
+
+	CreateService(service Service) (Service, error)
 }

@@ -13,6 +13,8 @@ const (
 
 	userEP       string = baseEP + "/users"
 	singleUserEP string = userEP + "/:" + idParam
+
+	serviceEP string = baseEP + "/services"
 )
 
 func (h *handler) userRoutes() Routes {
@@ -44,10 +46,22 @@ func (h *handler) userRoutes() Routes {
 	}
 }
 
+func (h *handler) serviceRoutes() Routes {
+	return Routes{
+		{
+			Name:        "CreateService",
+			Method:      http.MethodPost,
+			Pattern:     serviceEP,
+			HandlerFunc: h.createService,
+		},
+	}
+}
+
 // Routes builds the server endpoint route to handlers
 func (h *handler) Routes() Routes {
 	rts := Routes{}
 	rts = append(rts, h.userRoutes()...)
+	rts = append(rts, h.serviceRoutes()...)
 
 	return rts
 }

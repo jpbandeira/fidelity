@@ -1,7 +1,6 @@
 package repository
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/google/uuid"
@@ -48,7 +47,7 @@ func (db *GormRepository) UpdateUser(user domain.User) (domain.User, error) {
 			return t.Error
 		}
 		if t.RowsAffected == 0 {
-			return fmt.Errorf("not found")
+			return domain.ErrNotFound
 		}
 
 		return nil
@@ -66,6 +65,9 @@ func (db *GormRepository) getUser(tx *gorm.DB, uuid string) (model.User, error) 
 	err := tx.Where("uuid = ?", uuid).Find(&user).Error
 	if err != nil {
 		return model.User{}, err
+	}
+	if user.ID == 0 {
+		return model.User{}, domain.ErrNotFound
 	}
 
 	return user, nil
@@ -93,7 +95,7 @@ func (db *GormRepository) DeleteUser(uuid string) error {
 		return tx.Error
 	}
 	if tx.RowsAffected == 0 {
-		return fmt.Errorf("not found")
+		return domain.ErrNotFound
 	}
 
 	return nil

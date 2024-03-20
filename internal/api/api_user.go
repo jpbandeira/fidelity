@@ -10,7 +10,7 @@ import (
 	"github.com/jp/fidelity/pkg/apimodel"
 )
 
-func apiToDomain(c apimodel.User) domain.User {
+func userAPIToDomain(c apimodel.User) domain.User {
 	return domain.User{
 		ID:    c.ID,
 		Name:  c.Name,
@@ -19,7 +19,7 @@ func apiToDomain(c apimodel.User) domain.User {
 	}
 }
 
-func domainToAPI(c domain.User) apimodel.User {
+func userDomainToAPI(c domain.User) apimodel.User {
 	return apimodel.User{
 		ID:    c.ID,
 		Name:  c.Name,
@@ -38,12 +38,12 @@ func (h *handler) createUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.actions.CreateUser(apiToDomain(userAPI))
+	user, err := h.actions.CreateUser(userAPIToDomain(userAPI))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusCreated, domainToAPI(user))
+	c.JSON(http.StatusCreated, userDomainToAPI(user))
 }
 
 // updateUser - Update a User
@@ -56,12 +56,12 @@ func (h *handler) updateUser(c *gin.Context) {
 		return
 	}
 
-	user, err := h.actions.UpdateUser(apiToDomain(userAPI))
+	user, err := h.actions.UpdateUser(userAPIToDomain(userAPI))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusOK, domainToAPI(user))
+	c.JSON(http.StatusOK, userDomainToAPI(user))
 }
 
 // listUser - List a list of User

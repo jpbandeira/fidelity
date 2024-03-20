@@ -5,7 +5,16 @@ type Service struct {
 	Client      User
 	Attendant   User
 	Price       float32
-	ServiceType uint8
-	PaymentType uint8
+	ServiceType uint
+	PaymentType uint
 	Description string
+}
+
+func (a *actions) CreateService(service Service) (Service, error) {
+	service, err := a.db.CreateService(service)
+	if err != nil {
+		return Service{}, err
+	}
+
+	return service, nil
 }
