@@ -27,7 +27,7 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 			AttedantID:  attendant.ID,
 			Price:       service.Price,
 			ServiceType: service.ServiceType,
-			PaymentType: service.PaymentType,
+			PaymentType: domain.ToPaymentType(service.PaymentType),
 			Description: service.Description,
 		}
 
@@ -75,7 +75,7 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 	return serviceModel.RepoToDomain(), nil
 }
 
-func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendID uint, serviceType uint) (model.ClientServiceCount, error) {
+func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendID uint, serviceType string) (model.ClientServiceCount, error) {
 	var clientServiceCount model.ClientServiceCount
 	err := tx.Where("client_id = ? AND service_type = ?", cliendID, serviceType).Find(&clientServiceCount).Error
 	if err != nil {

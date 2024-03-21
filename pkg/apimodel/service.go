@@ -6,8 +6,8 @@ type Service struct {
 	Attendant User    `json:"attendant"`
 	Price     float32 `json:"price"`
 	// change to string and convert to uint in the domain layer
-	ServiceType uint `json:"service_type"`
+	ServiceType string `json:"service_type"`
 	// change to string and convert to uint in the domain layer
-	PaymentType uint   `json:"payment_type"`
+	PaymentType string `json:"payment_type"`
 	Description string `json:"description"`
 }

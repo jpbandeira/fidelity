@@ -18,9 +18,9 @@ type Service struct {
 	AttedantID uint `gorm:"not null; index:idx_user_attendant_service;"`
 	Attendant  User `gorm:"foreignKey:AttedantID;references:ID;constraint:OnDelete:CASCADE;"`
 
-	Price       float32 `gorm:"not null"`
-	ServiceType uint    `gorm:"not null"`
-	PaymentType uint    `gorm:"not null"`
+	Price       float32            `gorm:"not null"`
+	ServiceType string             `gorm:"not null"`
+	PaymentType domain.PaymentType `gorm:"not null"`
 	Description string
 }
 
@@ -40,7 +40,7 @@ func (s Service) RepoToDomain() domain.Service {
 		Attendant:   s.Attendant.RepoToDomain(),
 		Price:       s.Price,
 		ServiceType: s.ServiceType,
-		PaymentType: s.PaymentType,
+		PaymentType: s.PaymentType.String(),
 		Description: s.Description,
 	}
 }

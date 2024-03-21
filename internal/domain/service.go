@@ -5,8 +5,8 @@ type Service struct {
 	Client      User
 	Attendant   User
 	Price       float32
-	ServiceType uint
-	PaymentType uint
+	ServiceType string
+	PaymentType string
 	Description string
 }
 
