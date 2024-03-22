@@ -21,14 +21,23 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 			return err
 		}
 
+		var serviceType model.ServiceType
+		t := db.Where("description = ?", service.ServiceType).Find(&serviceType)
+		if t.Error != nil {
+			return err
+		}
+		if serviceType.ID == 0 {
+			return domain.ErrNotFound
+		}
+
 		serviceModel = model.Service{
-			UUID:        uuid.NewString(),
-			ClientID:    client.ID,
-			AttedantID:  attendant.ID,
-			Price:       service.Price,
-			ServiceType: service.ServiceType,
-			PaymentType: domain.ToPaymentType(service.PaymentType),
-			Description: service.Description,
+			UUID:          uuid.NewString(),
+			ClientID:      client.ID,
+			AttedantID:    attendant.ID,
+			Price:         service.Price,
+			ServiceTypeID: serviceType.ID,
+			PaymentType:   domain.ToPaymentType(service.PaymentType),
+			Description:   service.Description,
 		}
 
 		err = db.Create(&serviceModel).Error
@@ -36,7 +45,7 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 			return err
 		}
 
-		clientServiceCount, err := db.getClientServiceCount(tx, serviceModel.ClientID, serviceModel.ServiceType)
+		clientServiceCount, err := db.getClientServiceCount(tx, serviceModel.ClientID, serviceModel.ServiceTypeID)
 		if err != nil && err != domain.ErrNotFound {
 			return err
 		}
@@ -46,7 +55,7 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 			err := tx.
 				Session(&gorm.Session{FullSaveAssociations: true}).
 				Select("*").
-				Where("client_id = ? AND service_type = ?", clientServiceCount.ClientID, clientServiceCount.ServiceType).
+				Where("client_id = ? AND service_type_id = ?", clientServiceCount.ClientID, clientServiceCount.ServiceTypeID).
 				Updates(&clientServiceCount).Error
 			if err != nil {
 				return err
@@ -56,9 +65,9 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 		}
 
 		clientServiceCountModel := model.ClientServiceCount{
-			ServiceType:  serviceModel.ServiceType,
-			ClientID:     serviceModel.ClientID,
-			ServiceCount: 1,
+			ServiceTypeID: serviceModel.ServiceTypeID,
+			ClientID:      serviceModel.ClientID,
+			ServiceCount:  1,
 		}
 
 		err = db.Create(&clientServiceCountModel).Error
@@ -75,9 +84,9 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 	return serviceModel.RepoToDomain(), nil
 }
 
-func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendID uint, serviceType string) (model.ClientServiceCount, error) {
+func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendID uint, serviceType uint) (model.ClientServiceCount, error) {
 	var clientServiceCount model.ClientServiceCount
-	err := tx.Where("client_id = ? AND service_type = ?", cliendID, serviceType).Find(&clientServiceCount).Error
+	err := tx.Where("client_id = ? AND service_type_id = ?", cliendID, serviceType).Find(&clientServiceCount).Error
 	if err != nil {
 		return model.ClientServiceCount{}, err
 	}
