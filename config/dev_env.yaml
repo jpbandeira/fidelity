@@ -10,8 +10,8 @@ database_type: "postgres"
 
 postgres:
   username: "postgres"
-  password: "love"
+  password: "postgres"
   host: "localhost"
-  port: "5432"
+  port: "6543"
   database: "fidelity"
   sslmode: "disable" 
