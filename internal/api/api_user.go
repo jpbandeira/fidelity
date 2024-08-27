@@ -66,7 +66,14 @@ func (h *handler) updateUser(c *gin.Context) {
 
 // listUser - List a list of User
 func (h *handler) listUser(c *gin.Context) {
-	users, err := h.actions.ListUsers()
+	qps := []domain.Param{}
+	for key, value := range c.Request.URL.Query() {
+		for _, v := range value {
+			qps = append(qps, domain.Param{Key: key, Value: v})
+		}
+	}
+
+	users, err := h.actions.ListUsers(qps)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, err)
 	}

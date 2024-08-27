@@ -3,7 +3,7 @@ package domain
 type Actions interface {
 	CreateUser(User) (User, error)
 	UpdateUser(User) (User, error)
-	ListUsers() ([]User, error)
+	ListUsers([]Param) ([]User, error)
 	DeleteUser(string) error
 
 	CreateService(service Service) (Service, error)

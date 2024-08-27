@@ -73,10 +73,17 @@ func (db *GormRepository) getUser(tx *gorm.DB, uuid string) (model.User, error) 
 	return user, nil
 }
 
-func (db *GormRepository) ListUsers() ([]domain.User, error) {
+func (db *GormRepository) ListUsers(params []domain.Param) ([]domain.User, error) {
 	var users []model.User
+	var q string
+	var args []interface{}
 
-	err := db.Find(&users).Error
+	for _, v := range params {
+		q = q + v.Key + "=?"
+		args = append(args, v.Value)
+	}
+
+	err := db.Where(q, args...).Find(&users).Error
 	if err != nil {
 		return []domain.User{}, err
 	}

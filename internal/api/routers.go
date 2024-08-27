@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/gin-contrib/cors"
 )
 
 // Route is the information for every URI.
@@ -25,6 +26,7 @@ type Routes []Route
 func NewRouter(custom Routes, middleware ...gin.HandlerFunc) *gin.Engine {
 	router := gin.Default()
 	router.HandleMethodNotAllowed = true
+	router.Use(cors.Default())
 
 	for _, m := range middleware {
 		router.Use(m)

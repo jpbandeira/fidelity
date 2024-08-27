@@ -25,8 +25,8 @@ func (a actions) UpdateUser(user User) (User, error) {
 	return user, nil
 }
 
-func (a actions) ListUsers() ([]User, error) {
-	return a.db.ListUsers()
+func (a actions) ListUsers(params []Param) ([]User, error) {
+	return a.db.ListUsers(params)
 }
 
 func (a actions) DeleteUser(id string) error {
