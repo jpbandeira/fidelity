@@ -38,13 +38,14 @@ func (h *handler) createService(c *gin.Context) {
 
 	err := c.BindJSON(&serviceAPI)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
 	service, err := h.actions.CreateService(serviceAPIToDomain(serviceAPI))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusCreated, servicecDomainToAPI(service))

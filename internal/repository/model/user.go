@@ -6,7 +6,7 @@ import (
 )
 
 type User struct {
-	*gorm.Model
+	gorm.Model
 	// UUID is a unique globally id
 	UUID  string `gorm:"unique;not null;index"`
 	Name  string `gorm:"not null"`

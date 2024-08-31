@@ -28,7 +28,8 @@ func (db *GormRepository) CreateUser(user domain.User) (domain.User, error) {
 
 func (db *GormRepository) UpdateUser(user domain.User) (domain.User, error) {
 	var oldUser model.User
-	err := db.Transaction(func(tx *gorm.DB) error {
+	
+	err := db.Transaction(func(tx *gorm.DB) (err error) {
 		oldUser, err := db.getUser(tx, user.ID)
 		if err != nil {
 			return err
@@ -59,15 +60,34 @@ func (db *GormRepository) UpdateUser(user domain.User) (domain.User, error) {
 	return oldUser.RepoToDomain(), nil
 }
 
+func (db *GormRepository) GetUser(uuid string) (domain.User, error) {
+	var user model.User
+
+	err := db.Transaction(func(tx *gorm.DB) (err error) {
+		user, err = db.getUser(tx, uuid)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	if user.ID == 0 {
+		return domain.User{}, domain.ErrNotFound
+	}
+
+	return user.RepoToDomain(), nil
+}
+
 func (db *GormRepository) getUser(tx *gorm.DB, uuid string) (model.User, error) {
 	var user model.User
 
 	err := tx.Where("uuid = ?", uuid).Find(&user).Error
 	if err != nil {
 		return model.User{}, err
-	}
-	if user.ID == 0 {
-		return model.User{}, domain.ErrNotFound
 	}
 
 	return user, nil
