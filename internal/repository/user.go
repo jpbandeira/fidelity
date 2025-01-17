@@ -27,8 +27,8 @@ func (db *GormRepository) CreateUser(user domain.User) (domain.User, error) {
 }
 
 func (db *GormRepository) UpdateUser(user domain.User) (domain.User, error) {
-	var oldUser model.User
-	
+	var newUser model.User
+
 	err := db.Transaction(func(tx *gorm.DB) (err error) {
 		oldUser, err := db.getUser(tx, user.ID)
 		if err != nil {
@@ -50,14 +50,14 @@ func (db *GormRepository) UpdateUser(user domain.User) (domain.User, error) {
 		if t.RowsAffected == 0 {
 			return domain.ErrNotFound
 		}
-
+		newUser = oldUser
 		return nil
 	})
 	if err != nil {
 		return domain.User{}, err
 	}
 
-	return oldUser.RepoToDomain(), nil
+	return newUser.RepoToDomain(), nil
 }
 
 func (db *GormRepository) GetUser(uuid string) (domain.User, error) {

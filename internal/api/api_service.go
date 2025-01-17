@@ -50,3 +50,20 @@ func (h *handler) createService(c *gin.Context) {
 
 	c.JSON(http.StatusCreated, servicecDomainToAPI(service))
 }
+
+// listService - List a list of Services
+func (h *handler) listService(c *gin.Context) {
+	qps := []domain.Param{}
+	for key, value := range c.Request.URL.Query() {
+		for _, v := range value {
+			qps = append(qps, domain.Param{Key: key, Value: v})
+		}
+	}
+
+	users, err := h.actions.ListServices(qps)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err)
+	}
+
+	c.JSON(http.StatusOK, users)
+}

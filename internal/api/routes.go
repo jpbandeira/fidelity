@@ -54,6 +54,12 @@ func (h *handler) serviceRoutes() Routes {
 			Pattern:     serviceEP,
 			HandlerFunc: h.createService,
 		},
+		{
+			Name:        "ListService",
+			Method:      http.MethodGet,
+			Pattern:     serviceEP,
+			HandlerFunc: h.listService,
+		},
 	}
 }
 

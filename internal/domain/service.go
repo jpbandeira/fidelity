@@ -27,10 +27,9 @@ func (a *actions) CreateService(service Service) (Service, error) {
 		return Service{}, err
 	}
 
-	service, err = a.db.CreateService(service, attendant.ID, client.ID)
-	if err != nil {
-		return Service{}, err
-	}
+	return a.db.CreateService(service, attendant.ID, client.ID)
+}
 
-	return service, nil
+func (a actions) ListServices(params []Param) ([]Service, error) {
+	return a.db.ListServices(params)
 }

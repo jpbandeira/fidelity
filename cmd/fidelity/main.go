@@ -76,7 +76,7 @@ func addShutdownHook(f func(s os.Signal)) {
 
 func common(
 	cfg config.ServerConfig,
-	repo domain.RepoPersister,
+	repo domain.Repository,
 	logger *slog.Logger,
 ) *http.Server {
 	service := domain.ProviderService(repo)

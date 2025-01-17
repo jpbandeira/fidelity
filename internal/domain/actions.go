@@ -7,13 +7,14 @@ type Actions interface {
 	DeleteUser(string) error
 
 	CreateService(service Service) (Service, error)
+	ListServices(params []Param) ([]Service, error)
 }
 
 type actions struct {
-	db RepoPersister
+	db Repository
 }
 
-func ProviderService(db RepoPersister) Actions {
+func ProviderService(db Repository) Actions {
 	return &actions{
 		db: db,
 	}

@@ -103,3 +103,26 @@ func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendUUID string, 
 
 	return clientServiceCount, nil
 }
+
+func (db *GormRepository) ListServices(params []domain.Param) ([]domain.Service, error) {
+	var services []model.Service
+	var q string
+	var args []interface{}
+
+	for _, v := range params {
+		q = q + v.Key + "=?"
+		args = append(args, v.Value)
+	}
+
+	err := db.Where(q, args...).Find(&services).Error
+	if err != nil {
+		return []domain.Service{}, err
+	}
+
+	var result []domain.Service
+	for _, value := range services {
+		result = append(result, value.RepoToDomain())
+	}
+
+	return result, nil
+}

@@ -1,6 +1,6 @@
 package domain
 
-type RepoPersister interface {
+type Repository interface {
 	CreateUser(User) (User, error)
 	UpdateUser(User) (User, error)
 	ListUsers([]Param) ([]User, error)
@@ -8,4 +8,5 @@ type RepoPersister interface {
 	DeleteUser(string) error
 
 	CreateService(Service, string, string) (Service, error)
+	ListServices(params []Param) ([]Service, error)
 }
