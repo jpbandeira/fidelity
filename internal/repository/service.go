@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db *GormRepository) CreateService(service domain.Service, attendantUUID, clientUUID string) (domain.Service, error) {
+func (db *GormRepository) CreateService(service domain.Service) (domain.Service, error) {
 	var serviceModel model.Service
 
 	err := db.Transaction(func(tx *gorm.DB) (err error) {
@@ -18,12 +18,16 @@ func (db *GormRepository) CreateService(service domain.Service, attendantUUID, c
 
 		serviceModel = model.Service{
 			UUID:          uuid.NewString(),
-			ClientUUID:    clientUUID,
-			AttedantUUID:  attendantUUID,
+			ClientUUID:    service.Client.ID,
+			Client:        model.ClientDomainToRepo(service.Client),
+			Attendant:     model.AttendantDomainToRepo(service.Attendant),
+			AttedantUUID:  service.Attendant.ID,
 			Price:         service.Price,
 			ServiceTypeID: serviceType.ID,
+			ServiceType:   serviceType,
 			PaymentType:   domain.ToPaymentType(service.PaymentType),
 			Description:   service.Description,
+			ServiceDate:   service.ServiceDate,
 		}
 
 		err = db.Create(&serviceModel).Error
@@ -114,7 +118,7 @@ func (db *GormRepository) ListServices(params []domain.Param) ([]domain.Service,
 		args = append(args, v.Value)
 	}
 
-	err := db.Where(q, args...).Find(&services).Error
+	err := db.Preload("Client").Preload("Attendant").Preload("ServiceType").Where(q, args...).Find(&services).Error
 	if err != nil {
 		return []domain.Service{}, err
 	}

@@ -11,37 +11,68 @@ const (
 
 	baseEP string = "/fidelity"
 
-	userEP       string = baseEP + "/users"
-	singleUserEP string = userEP + "/:" + idParam
+	clientEP          string = baseEP + "/clients"
+	attendantEP       string = baseEP + "/attendants"
+	singleClientEP    string = clientEP + "/:" + idParam
+	singleAttendantEP string = attendantEP + "/:" + idParam
 
 	serviceEP string = baseEP + "/services"
 )
 
-func (h *handler) userRoutes() Routes {
+func (h *handler) clientRoutes() Routes {
 	return Routes{
 		{
-			Name:        "CreateUser",
+			Name:        "CreateClient",
 			Method:      http.MethodPost,
-			Pattern:     userEP,
-			HandlerFunc: h.createUser,
+			Pattern:     clientEP,
+			HandlerFunc: h.createClient,
 		},
 		{
-			Name:        "UpdateUser",
+			Name:        "UpdateClient",
 			Method:      http.MethodPut,
-			Pattern:     userEP,
-			HandlerFunc: h.updateUser,
+			Pattern:     clientEP,
+			HandlerFunc: h.updateClient,
 		},
 		{
-			Name:        "ListUser",
+			Name:        "ListClient",
 			Method:      http.MethodGet,
-			Pattern:     userEP,
-			HandlerFunc: h.listUser,
+			Pattern:     clientEP,
+			HandlerFunc: h.listClient,
 		},
 		{
-			Name:        "DeleteUser",
+			Name:        "DeleteClient",
 			Method:      http.MethodDelete,
-			Pattern:     singleUserEP,
-			HandlerFunc: h.deleteUser,
+			Pattern:     singleClientEP,
+			HandlerFunc: h.deleteCLient,
+		},
+	}
+}
+
+func (h *handler) attendantRoutes() Routes {
+	return Routes{
+		{
+			Name:        "CreateAttendant",
+			Method:      http.MethodPost,
+			Pattern:     attendantEP,
+			HandlerFunc: h.createAttendant,
+		},
+		{
+			Name:        "UpdateAttendant",
+			Method:      http.MethodPut,
+			Pattern:     attendantEP,
+			HandlerFunc: h.updateAttendant,
+		},
+		{
+			Name:        "ListAttendant",
+			Method:      http.MethodGet,
+			Pattern:     attendantEP,
+			HandlerFunc: h.listAttendant,
+		},
+		{
+			Name:        "DeleteAttendant",
+			Method:      http.MethodDelete,
+			Pattern:     singleAttendantEP,
+			HandlerFunc: h.deleteAttendant,
 		},
 	}
 }
@@ -66,7 +97,8 @@ func (h *handler) serviceRoutes() Routes {
 // Routes builds the server endpoint route to handlers
 func (h *handler) Routes() Routes {
 	rts := Routes{}
-	rts = append(rts, h.userRoutes()...)
+	rts = append(rts, h.clientRoutes()...)
+	rts = append(rts, h.attendantRoutes()...)
 	rts = append(rts, h.serviceRoutes()...)
 
 	return rts

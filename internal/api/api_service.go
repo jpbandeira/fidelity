@@ -11,24 +11,26 @@ import (
 func serviceAPIToDomain(s apimodel.Service) domain.Service {
 	return domain.Service{
 		ID:          s.ID,
-		Client:      userAPIToDomain(s.Client),
-		Attendant:   userAPIToDomain(s.Attendant),
+		Client:      clientAPIToDomain(s.Client),
+		Attendant:   attendantAPIToDomain(s.Attendant),
 		Price:       s.Price,
 		ServiceType: s.ServiceType,
 		PaymentType: s.PaymentType,
 		Description: s.Description,
+		ServiceDate: s.ServiceDate,
 	}
 }
 
 func servicecDomainToAPI(s domain.Service) apimodel.Service {
 	return apimodel.Service{
 		ID:          s.ID,
-		Client:      userDomainToAPI(s.Client),
-		Attendant:   userDomainToAPI(s.Attendant),
+		Client:      clientDomainToAPI(s.Client),
+		Attendant:   attendantDomainToAPI(s.Attendant),
 		Price:       s.Price,
 		ServiceType: s.ServiceType,
 		PaymentType: s.PaymentType,
 		Description: s.Description,
+		ServiceDate: s.ServiceDate,
 	}
 }
 

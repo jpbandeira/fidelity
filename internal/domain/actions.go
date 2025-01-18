@@ -1,10 +1,15 @@
 package domain
 
 type Actions interface {
-	CreateUser(User) (User, error)
-	UpdateUser(User) (User, error)
-	ListUsers([]Param) ([]User, error)
-	DeleteUser(string) error
+	CreateClient(Client) (Client, error)
+	UpdateClient(Client) (Client, error)
+	ListClients([]Param) ([]Client, error)
+	DeleteClient(string) error
+
+	CreateAttendant(Attendant) (Attendant, error)
+	UpdateAttendant(Attendant) (Attendant, error)
+	ListAttendants([]Param) ([]Attendant, error)
+	DeleteAttendant(string) error
 
 	CreateService(service Service) (Service, error)
 	ListServices(params []Param) ([]Service, error)

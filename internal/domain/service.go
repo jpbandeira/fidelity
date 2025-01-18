@@ -1,13 +1,16 @@
 package domain
 
+import "time"
+
 type Service struct {
 	ID          string
-	Client      User
-	Attendant   User
+	Client      Client
+	Attendant   Attendant
 	Price       float32
 	ServiceType string
 	PaymentType string
 	Description string
+	ServiceDate time.Time
 }
 
 type ServiceList struct {
@@ -17,17 +20,20 @@ type ServiceList struct {
 }
 
 func (a *actions) CreateService(service Service) (Service, error) {
-	client, err := a.db.GetUser(service.Client.ID)
+	client, err := a.db.GetClient(service.Client.ID)
 	if err != nil {
 		return Service{}, err
 	}
 
-	attendant, err := a.db.GetUser(service.Attendant.ID)
+	attendant, err := a.db.GetAttendant(service.Attendant.ID)
 	if err != nil {
 		return Service{}, err
 	}
 
-	return a.db.CreateService(service, attendant.ID, client.ID)
+	service.Client = client
+	service.Attendant = attendant
+
+	return a.db.CreateService(service)
 }
 
 func (a actions) ListServices(params []Param) ([]Service, error) {

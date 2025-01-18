@@ -5,7 +5,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type User struct {
+type Attendant struct {
 	gorm.Model
 	// UUID is a unique globally id
 	UUID  string `gorm:"unique;not null;index"`
@@ -14,17 +14,21 @@ type User struct {
 	Phone string `gorm:"unique;not null"`
 }
 
-func (p User) RepoToDomain() domain.User {
-	return domain.User{
-		ID:    p.UUID,
-		Name:  p.Name,
-		Email: p.Email,
-		Phone: p.Phone,
+func (p Attendant) RepoToDomain() domain.Attendant {
+	return domain.Attendant{
+		ID:        p.UUID,
+		Name:      p.Name,
+		Email:     p.Email,
+		Phone:     p.Phone,
+		CreatedAt: p.CreatedAt,
 	}
 }
 
-func UserDomainToRepo(p domain.User) User {
-	return User{
+func AttendantDomainToRepo(p domain.Attendant) Attendant {
+	return Attendant{
+		Model: gorm.Model{
+			CreatedAt: p.CreatedAt,
+		},
 		UUID:  p.ID,
 		Name:  p.Name,
 		Email: p.Email,
