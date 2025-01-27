@@ -16,7 +16,6 @@ func attendantAPIToDomain(c apimodel.Attendant) domain.Attendant {
 		Name:      c.Name,
 		Email:     c.Email,
 		Phone:     c.Phone,
-		CreatedAt: c.CreatedAt,
 	}
 }
 
@@ -26,7 +25,6 @@ func attendantDomainToAPI(c domain.Attendant) apimodel.Attendant {
 		Name:      c.Name,
 		Email:     c.Email,
 		Phone:     c.Phone,
-		CreatedAt: c.CreatedAt,
 	}
 }
 
@@ -80,7 +78,12 @@ func (h *handler) listAttendant(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusOK, attendants)
+	var result = make([]apimodel.Attendant, 0)
+	for _, att := range attendants {
+		result = append(result, attendantDomainToAPI(att))
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 // deleteAttendant - Delete a Attendant

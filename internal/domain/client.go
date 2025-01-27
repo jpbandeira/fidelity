@@ -11,7 +11,7 @@ type Client struct {
 }
 
 func (a actions) CreateClient(client Client) (Client, error) {
-	client, err := a.db.CreateCLient(client)
+	client, err := a.db.CreateClient(client)
 	if err != nil {
 		return Client{}, err
 	}

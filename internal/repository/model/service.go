@@ -54,3 +54,11 @@ func (s Service) RepoToDomain() domain.Service {
 		ServiceDate: s.ServiceDate,
 	}
 }
+
+func (csc ClientServiceCount) RepoToDomain() domain.ClientServiceCount {
+	return domain.ClientServiceCount{
+		ServiceType:  csc.ServiceType.RepoToDomain(),
+		Client:       csc.Client.RepoToDomain(),
+		ServiceCount: csc.ServiceCount,
+	}
+}

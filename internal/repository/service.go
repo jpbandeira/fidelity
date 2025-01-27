@@ -20,8 +20,8 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 			UUID:          uuid.NewString(),
 			ClientUUID:    service.Client.ID,
 			Client:        model.ClientDomainToRepo(service.Client),
-			Attendant:     model.AttendantDomainToRepo(service.Attendant),
 			AttedantUUID:  service.Attendant.ID,
+			Attendant:     model.AttendantDomainToRepo(service.Attendant),
 			Price:         service.Price,
 			ServiceTypeID: serviceType.ID,
 			ServiceType:   serviceType,
@@ -108,15 +108,33 @@ func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendUUID string, 
 	return clientServiceCount, nil
 }
 
-func (db *GormRepository) ListServices(params []domain.Param) ([]domain.Service, error) {
+func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.ClientServiceCount, error) {
+	clientServicesCount := []model.ClientServiceCount{}
+	err := db.Preload("Client").Preload("ServiceType").Where("client_uuid = ?", cliendUUID).Find(&clientServicesCount).Error
+	if err != nil {
+		return []domain.ClientServiceCount{}, err
+	}
+
+	var result []domain.ClientServiceCount
+	for _, csc := range clientServicesCount {
+		result = append(result, csc.RepoToDomain())
+	}
+
+	return result, nil
+}
+
+func (db *GormRepository) ListServicesByClient(clientID string, params []domain.Param) ([]domain.Service, error) {
 	var services []model.Service
 	var q string
 	var args []interface{}
 
 	for _, v := range params {
-		q = q + v.Key + "=?"
+		q = q + v.Key + " = ?"
 		args = append(args, v.Value)
 	}
+
+	q = q + "client_uuid" + " = ?"
+	args = append(args, clientID)
 
 	err := db.Preload("Client").Preload("Attendant").Preload("ServiceType").Where(q, args...).Find(&services).Error
 	if err != nil {
@@ -124,8 +142,8 @@ func (db *GormRepository) ListServices(params []domain.Param) ([]domain.Service,
 	}
 
 	var result []domain.Service
-	for _, value := range services {
-		result = append(result, value.RepoToDomain())
+	for _, s := range services {
+		result = append(result, s.RepoToDomain())
 	}
 
 	return result, nil

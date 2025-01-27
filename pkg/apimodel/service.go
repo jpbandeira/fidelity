@@ -3,12 +3,22 @@ package apimodel
 import "time"
 
 type Service struct {
-	ID          string    `json:"ID"`
-	Client      Client    `json:"Client"`
-	Attendant   Attendant `json:"Attendant"`
-	Price       float32   `json:"Price"`
-	ServiceType string    `json:"ServiceType"`
-	PaymentType string    `json:"PaymentType"`
-	Description string    `json:"Description"`
-	ServiceDate time.Time `json:"ServiceDate"`
+	ID          string    `json:"id"`
+	Client      Client    `json:"client"`
+	Attendant   Attendant `json:"attendant"`
+	Price       float32   `json:"price"`
+	ServiceType string    `json:"serviceType"`
+	PaymentType string    `json:"paymentType"`
+	Description string    `json:"description"`
+	ServiceDate time.Time `json:"serviceDate"`
+}
+
+type ClientServiceType struct {
+	ServiceType string `json:"serviceType"`
+	Count       int    `json:"count"`
+}
+
+type ServiceList struct {
+	Items               []Service           `json:"items"`
+	CountOfServiceTypes []ClientServiceType `json:"countOfServiceTypes"`
 }

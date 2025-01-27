@@ -1,7 +1,7 @@
 package domain
 
 type Repository interface {
-	CreateCLient(Client) (Client, error)
+	CreateClient(Client) (Client, error)
 	UpdateClient(Client) (Client, error)
 	ListClients([]Param) ([]Client, error)
 	GetClient(string) (Client, error)
@@ -14,5 +14,8 @@ type Repository interface {
 	DeleteAttendant(string) error
 
 	CreateService(Service) (Service, error)
-	ListServices(params []Param) ([]Service, error)
+	ListServicesByClient(string, []Param) ([]Service, error)
+	GetClientServicesCount(string) ([]ClientServiceCount, error)
+
+	ListServiceTypes([]Param) ([]ServiceType, error)
 }

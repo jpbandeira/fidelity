@@ -12,21 +12,19 @@ import (
 
 func clientAPIToDomain(c apimodel.Client) domain.Client {
 	return domain.Client{
-		ID:        c.ID,
-		Name:      c.Name,
-		Email:     c.Email,
-		Phone:     c.Phone,
-		CreatedAt: c.CreatedAt,
+		ID:    c.ID,
+		Name:  c.Name,
+		Email: c.Email,
+		Phone: c.Phone,
 	}
 }
 
 func clientDomainToAPI(c domain.Client) apimodel.Client {
 	return apimodel.Client{
-		ID:        c.ID,
-		Name:      c.Name,
-		Email:     c.Email,
-		Phone:     c.Phone,
-		CreatedAt: c.CreatedAt,
+		ID:    c.ID,
+		Name:  c.Name,
+		Email: c.Email,
+		Phone: c.Phone,
 	}
 }
 
@@ -80,7 +78,12 @@ func (h *handler) listClient(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err)
 	}
 
-	c.JSON(http.StatusOK, clients)
+	var result = make([]apimodel.Client, 0)
+	for _, c := range clients {
+		result = append(result, clientDomainToAPI(c))
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 // deleteCLient - Delete a Client

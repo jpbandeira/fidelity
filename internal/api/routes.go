@@ -16,7 +16,9 @@ const (
 	singleClientEP    string = clientEP + "/:" + idParam
 	singleAttendantEP string = attendantEP + "/:" + idParam
 
-	serviceEP string = baseEP + "/services"
+	serviceEP        string = baseEP + "/services"
+	clientServicesRP string = singleClientEP + "/services"
+	serviceTypeEP    string = baseEP + "/service-types"
 )
 
 func (h *handler) clientRoutes() Routes {
@@ -86,10 +88,21 @@ func (h *handler) serviceRoutes() Routes {
 			HandlerFunc: h.createService,
 		},
 		{
-			Name:        "ListService",
+			Name:        "ListClientServices",
 			Method:      http.MethodGet,
-			Pattern:     serviceEP,
-			HandlerFunc: h.listService,
+			Pattern:     clientServicesRP,
+			HandlerFunc: h.listClientServices,
+		},
+	}
+}
+
+func (h *handler) serviceTypeRoutes() Routes {
+	return Routes{
+		{
+			Name:        "ListServiceType",
+			Method:      http.MethodGet,
+			Pattern:     serviceTypeEP,
+			HandlerFunc: h.listServiceType,
 		},
 	}
 }
@@ -100,6 +113,7 @@ func (h *handler) Routes() Routes {
 	rts = append(rts, h.clientRoutes()...)
 	rts = append(rts, h.attendantRoutes()...)
 	rts = append(rts, h.serviceRoutes()...)
+	rts = append(rts, h.serviceTypeRoutes()...)
 
 	return rts
 }

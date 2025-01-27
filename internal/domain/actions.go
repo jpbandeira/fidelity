@@ -11,8 +11,11 @@ type Actions interface {
 	ListAttendants([]Param) ([]Attendant, error)
 	DeleteAttendant(string) error
 
-	CreateService(service Service) (Service, error)
-	ListServices(params []Param) ([]Service, error)
+	CreateService(Service) (Service, error)
+	ListServicesByClient(string, []Param) ([]Service, error)
+	GetClientServicesCount(string) ([]ClientServiceCount, error)
+
+	ListServiceTypes([]Param) ([]ServiceType, error)
 }
 
 type actions struct {

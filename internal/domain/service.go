@@ -13,10 +13,10 @@ type Service struct {
 	ServiceDate time.Time
 }
 
-type ServiceList struct {
-	Items []Service
-	Total int
-	Count int
+type ClientServiceCount struct {
+	ServiceType  ServiceType
+	Client       Client
+	ServiceCount int
 }
 
 func (a *actions) CreateService(service Service) (Service, error) {
@@ -36,6 +36,10 @@ func (a *actions) CreateService(service Service) (Service, error) {
 	return a.db.CreateService(service)
 }
 
-func (a actions) ListServices(params []Param) ([]Service, error) {
-	return a.db.ListServices(params)
+func (a *actions) ListServicesByClient(clientID string, params []Param) ([]Service, error) {
+	return a.db.ListServicesByClient(clientID, params)
+}
+
+func (a *actions) GetClientServicesCount(cliendUUID string) ([]ClientServiceCount, error) {
+	return a.db.GetClientServicesCount(cliendUUID)
 }
