@@ -67,7 +67,7 @@ func (db *GormRepository) getServiceType(tx *gorm.DB, serviceType string) (model
 }
 
 func (db *GormRepository) createClientServiceCount(tx *gorm.DB, serviceTypeID uint, clientUUID string) error {
-	clientServiceCountModel := model.ClientServiceCount{
+	clientServiceCountModel := model.ClientServiceTypeCount{
 		ServiceTypeID: serviceTypeID,
 		ClientUUID:    clientUUID,
 		ServiceCount:  1,
@@ -81,7 +81,7 @@ func (db *GormRepository) createClientServiceCount(tx *gorm.DB, serviceTypeID ui
 	return nil
 }
 
-func (db *GormRepository) updateClientServiceCount(tx *gorm.DB, clientServiceCount model.ClientServiceCount) error {
+func (db *GormRepository) updateClientServiceCount(tx *gorm.DB, clientServiceCount model.ClientServiceTypeCount) error {
 	clientServiceCount.ServiceCount = clientServiceCount.ServiceCount + 1
 	err := tx.
 		Session(&gorm.Session{FullSaveAssociations: true}).
@@ -95,27 +95,27 @@ func (db *GormRepository) updateClientServiceCount(tx *gorm.DB, clientServiceCou
 	return nil
 }
 
-func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendUUID string, serviceTypeID uint) (model.ClientServiceCount, error) {
-	clientServiceCount := model.ClientServiceCount{}
+func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendUUID string, serviceTypeID uint) (model.ClientServiceTypeCount, error) {
+	clientServiceCount := model.ClientServiceTypeCount{}
 	err := tx.Where("client_uuid = ? AND service_type_id = ?", cliendUUID, serviceTypeID).Find(&clientServiceCount).Error
 	if err != nil {
-		return model.ClientServiceCount{}, err
+		return model.ClientServiceTypeCount{}, err
 	}
 	if clientServiceCount.ClientUUID == "" {
-		return model.ClientServiceCount{}, domain.ErrNotFound
+		return model.ClientServiceTypeCount{}, domain.ErrNotFound
 	}
 
 	return clientServiceCount, nil
 }
 
-func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.ClientServiceCount, error) {
-	clientServicesCount := []model.ClientServiceCount{}
+func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.ClientServiceTypeCount, error) {
+	clientServicesCount := []model.ClientServiceTypeCount{}
 	err := db.Preload("Client").Preload("ServiceType").Where("client_uuid = ?", cliendUUID).Find(&clientServicesCount).Error
 	if err != nil {
-		return []domain.ClientServiceCount{}, err
+		return []domain.ClientServiceTypeCount{}, err
 	}
 
-	var result []domain.ClientServiceCount
+	var result []domain.ClientServiceTypeCount
 	for _, csc := range clientServicesCount {
 		result = append(result, csc.RepoToDomain())
 	}
@@ -136,7 +136,7 @@ func (db *GormRepository) ListServicesByClient(clientID string, params []domain.
 	q = q + "client_uuid" + " = ?"
 	args = append(args, clientID)
 
-	err := db.Preload("Client").Preload("Attendant").Preload("ServiceType").Where(q, args...).Find(&services).Error
+	err := db.Preload("Client").Preload("Attendant").Preload("ServiceType").Where(q, args...).Order("service_date DESC").Find(&services).Error
 	if err != nil {
 		return []domain.Service{}, err
 	}

@@ -36,27 +36,27 @@ func servicecDomainToAPI(s domain.Service) apimodel.Service {
 	}
 }
 
-func clientServiceTypeToAPI(csc domain.ClientServiceCount) apimodel.ClientServiceType {
-	return apimodel.ClientServiceType{
+func serviceTypesCountDomainToAPI(csc domain.ClientServiceTypeCount) apimodel.ServiceTypeCount {
+	return apimodel.ServiceTypeCount{
 		ServiceType: csc.ServiceType.Description,
-		Count:       csc.ServiceCount,
+		Count:       csc.Count,
 	}
 }
 
-func servicecDomainToAPIList(sList []domain.Service, cscList []domain.ClientServiceCount) apimodel.ServiceList {
-	var apiServiceList = make([]apimodel.Service, 0)
+func servicecDomainToAPIList(sList []domain.Service, cscList []domain.ClientServiceTypeCount) apimodel.ServiceList {
+	var serviceList = make([]apimodel.Service, 0)
 	for _, s := range sList {
-		apiServiceList = append(apiServiceList, servicecDomainToAPI(s))
+		serviceList = append(serviceList, servicecDomainToAPI(s))
 	}
 
-	var clientServiceTypeList = make([]apimodel.ClientServiceType, 0)
+	var serviceTypesCount = make([]apimodel.ServiceTypeCount, 0)
 	for _, csc := range cscList {
-		clientServiceTypeList = append(clientServiceTypeList, clientServiceTypeToAPI(csc))
+		serviceTypesCount = append(serviceTypesCount, serviceTypesCountDomainToAPI(csc))
 	}
 
 	return apimodel.ServiceList{
-		Items:               apiServiceList,
-		CountOfServiceTypes: clientServiceTypeList,
+		Items:             serviceList,
+		ServiceTypesCount: serviceTypesCount,
 	}
 }
 

@@ -13,12 +13,12 @@ type Service struct {
 	ServiceDate time.Time `json:"serviceDate"`
 }
 
-type ClientServiceType struct {
+type ServiceTypeCount struct {
 	ServiceType string `json:"serviceType"`
 	Count       int    `json:"count"`
 }
 
 type ServiceList struct {
-	Items               []Service           `json:"items"`
-	CountOfServiceTypes []ClientServiceType `json:"countOfServiceTypes"`
+	Items             []Service          `json:"items"`
+	ServiceTypesCount []ServiceTypeCount `json:"serviceTypes"`
 }

@@ -30,7 +30,7 @@ var (
 
 func databaseModels() []interface{} {
 	return []interface{}{
-		model.ClientServiceCount{},
+		model.ClientServiceTypeCount{},
 		model.Client{},
 		model.Service{},
 	}

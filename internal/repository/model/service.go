@@ -29,7 +29,7 @@ type Service struct {
 	ServiceDate time.Time `gorm:"not null"`
 }
 
-type ClientServiceCount struct {
+type ClientServiceTypeCount struct {
 	// ServiceTypeID  represents the relationship between service type and service count
 	ServiceTypeID uint        `gorm:"not null; index:idx_service_type_service_count; uniqueIndex:idx_service_type_client;"`
 	ServiceType   ServiceType `gorm:"foreignKey:ServiceTypeID;references:ID;constraint:OnUpdate:CASCADE"`
@@ -55,10 +55,10 @@ func (s Service) RepoToDomain() domain.Service {
 	}
 }
 
-func (csc ClientServiceCount) RepoToDomain() domain.ClientServiceCount {
-	return domain.ClientServiceCount{
-		ServiceType:  csc.ServiceType.RepoToDomain(),
-		Client:       csc.Client.RepoToDomain(),
-		ServiceCount: csc.ServiceCount,
+func (csc ClientServiceTypeCount) RepoToDomain() domain.ClientServiceTypeCount {
+	return domain.ClientServiceTypeCount{
+		ServiceType: csc.ServiceType.RepoToDomain(),
+		Client:      csc.Client.RepoToDomain(),
+		Count:       csc.ServiceCount,
 	}
 }

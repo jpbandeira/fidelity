@@ -15,7 +15,7 @@ type Repository interface {
 
 	CreateService(Service) (Service, error)
 	ListServicesByClient(string, []Param) ([]Service, error)
-	GetClientServicesCount(string) ([]ClientServiceCount, error)
+	GetClientServicesCount(string) ([]ClientServiceTypeCount, error)
 
 	ListServiceTypes([]Param) ([]ServiceType, error)
 }
