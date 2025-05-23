@@ -7,24 +7,24 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/pkg/apimodel"
+	"github.com/jp/fidelity/internal/pkg/apimodel"
 )
 
 func attendantAPIToDomain(c apimodel.Attendant) domain.Attendant {
 	return domain.Attendant{
-		ID:        c.ID,
-		Name:      c.Name,
-		Email:     c.Email,
-		Phone:     c.Phone,
+		ID:    c.ID,
+		Name:  c.Name,
+		Email: c.Email,
+		Phone: c.Phone,
 	}
 }
 
 func attendantDomainToAPI(c domain.Attendant) apimodel.Attendant {
 	return apimodel.Attendant{
-		ID:        c.ID,
-		Name:      c.Name,
-		Email:     c.Email,
-		Phone:     c.Phone,
+		ID:    c.ID,
+		Name:  c.Name,
+		Email: c.Email,
+		Phone: c.Phone,
 	}
 }
 

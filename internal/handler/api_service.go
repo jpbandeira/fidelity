@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/pkg/apimodel"
+	"github.com/jp/fidelity/internal/pkg/apimodel"
 )
 
 func serviceAPIToDomain(s apimodel.Service) domain.Service {

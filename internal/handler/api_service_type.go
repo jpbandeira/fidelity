@@ -5,7 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/pkg/apimodel"
+	"github.com/jp/fidelity/internal/pkg/apimodel"
 )
 
 func serviceTypeAPIToDomain(s apimodel.ServiceType) domain.ServiceType {

@@ -3,7 +3,7 @@ package config
 import (
 	"fmt"
 
-	"github.com/jp/fidelity/internal/infra/platform"
+	"github.com/jp/fidelity/internal/pkg/infraestructure/platform"
 )
 
 type ServerConfig struct {
