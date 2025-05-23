@@ -25,7 +25,7 @@ func (a Attendant) validateClient() error {
 			Field:  ferros.NameField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: AttendantEntity,
-		}.Error())
+		})
 	}
 
 	if a.Email == "" {
@@ -33,7 +33,7 @@ func (a Attendant) validateClient() error {
 			Field:  ferros.EmailField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: AttendantEntity,
-		}.Error())
+		})
 	}
 
 	if a.Phone == "" {
@@ -41,7 +41,7 @@ func (a Attendant) validateClient() error {
 			Field:  ferros.PhoneField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: AttendantEntity,
-		}.Error())
+		})
 	}
 
 	return nil
@@ -85,7 +85,7 @@ func (a actions) DeleteAttendant(id string) error {
 			Field:  ferros.IdField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: AttendantEntity,
-		}.Error())
+		})
 	}
 
 	err := a.db.DeleteAttendant(id)
@@ -93,7 +93,7 @@ func (a actions) DeleteAttendant(id string) error {
 		return fmt.Errorf(
 			ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
 				Entity: AttendantEntity,
-			}.Error(),
+			},
 		)
 	}
 

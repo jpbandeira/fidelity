@@ -12,7 +12,7 @@ var (
 )
 
 const (
-	ErrFormatString string = "%w: %s"
+	ErrFormatString string = "%w: %w"
 
 	NameField  string = "name"
 	EmailField string = "email"

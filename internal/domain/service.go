@@ -35,7 +35,7 @@ func (s Service) validateService() error {
 			Field:  ferros.IdField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ClientEntity,
-		}.Error())
+		})
 	}
 
 	if s.Attendant.ID == "" {
@@ -43,7 +43,7 @@ func (s Service) validateService() error {
 			Field:  ferros.IdField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: AttendantEntity,
-		}.Error())
+		})
 	}
 
 	if s.ServiceType == "" {
@@ -51,7 +51,7 @@ func (s Service) validateService() error {
 			Field:  ferros.TypeField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ServiceEntity,
-		}.Error())
+		})
 	}
 
 	if s.PaymentType == "" {
@@ -59,7 +59,7 @@ func (s Service) validateService() error {
 			Field:  ferros.PaymentTypeField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ServiceEntity,
-		}.Error())
+		})
 	}
 
 	if s.Description == "" {
@@ -67,7 +67,7 @@ func (s Service) validateService() error {
 			Field:  ferros.DescriptionField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ServiceEntity,
-		}.Error())
+		})
 	}
 
 	if s.ServiceDate.String() == "" {
@@ -75,7 +75,7 @@ func (s Service) validateService() error {
 			Field:  ferros.DateField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ServiceEntity,
-		}.Error())
+		})
 	}
 
 	if s.Price < 0 {
@@ -83,7 +83,7 @@ func (s Service) validateService() error {
 			Field:  ferros.PriceField,
 			Msg:    ferros.CannotBeNegativeErrorString,
 			Entity: ServiceEntity,
-		}.Error())
+		})
 	}
 
 	if s.Price == 0 {
@@ -91,7 +91,7 @@ func (s Service) validateService() error {
 			Field:  ferros.PriceField,
 			Msg:    ferros.ShouldBeGreaterThanErrorString,
 			Entity: ServiceEntity,
-		}.Error())
+		})
 	}
 
 	return nil
@@ -109,7 +109,7 @@ func (a *actions) CreateService(service Service) (Service, error) {
 			return Service{}, fmt.Errorf(
 				ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
 					Entity: ClientEntity,
-				}.Error(),
+				},
 			)
 		}
 
@@ -122,7 +122,7 @@ func (a *actions) CreateService(service Service) (Service, error) {
 			return Service{}, fmt.Errorf(
 				ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
 					Entity: AttendantEntity,
-				}.Error(),
+				},
 			)
 		}
 
@@ -142,7 +142,7 @@ func (a *actions) ListServicesByClient(clientID string, params []Param) ([]Servi
 				Field:  ferros.IdField,
 				Msg:    ferros.EmptyErrorString,
 				Entity: ClientEntity,
-			}.Error())
+			})
 	}
 
 	return a.db.ListServicesByClient(clientID, params)
@@ -155,7 +155,7 @@ func (a *actions) GetClientServicesCount(clientID string) ([]ClientServiceTypeCo
 				Field:  ferros.IdField,
 				Msg:    ferros.EmptyErrorString,
 				Entity: ClientEntity,
-			}.Error())
+			})
 	}
 
 	return a.db.GetClientServicesCount(clientID)
