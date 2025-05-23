@@ -3,6 +3,7 @@ package repository
 import (
 	"github.com/google/uuid"
 	"github.com/jp/fidelity/internal/domain"
+	ferros "github.com/jp/fidelity/internal/pkg/errors"
 	"github.com/jp/fidelity/internal/repository/model"
 	"gorm.io/gorm"
 )
@@ -36,7 +37,7 @@ func (db *GormRepository) CreateService(service domain.Service) (domain.Service,
 		}
 
 		clientServiceCount, cscErr := db.getClientServiceCount(tx, serviceModel.ClientUUID, serviceModel.ServiceTypeID)
-		if cscErr != nil && cscErr != domain.ErrNotFound {
+		if cscErr != nil && cscErr != ferros.ErrNotFound {
 			return cscErr
 		}
 
@@ -60,7 +61,7 @@ func (db *GormRepository) getServiceType(tx *gorm.DB, serviceType string) (model
 		return model.ServiceType{}, t.Error
 	}
 	if serviceTypeModel.ID == 0 {
-		return model.ServiceType{}, domain.ErrNotFound
+		return model.ServiceType{}, ferros.ErrNotFound
 	}
 
 	return serviceTypeModel, nil
@@ -102,7 +103,7 @@ func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendUUID string, 
 		return model.ClientServiceTypeCount{}, err
 	}
 	if clientServiceCount.ClientUUID == "" {
-		return model.ClientServiceTypeCount{}, domain.ErrNotFound
+		return model.ClientServiceTypeCount{}, ferros.ErrNotFound
 	}
 
 	return clientServiceCount, nil

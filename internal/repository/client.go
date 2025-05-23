@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/jp/fidelity/internal/domain"
+	ferros "github.com/jp/fidelity/internal/pkg/errors"
 	"github.com/jp/fidelity/internal/repository/model"
 )
 
@@ -48,7 +49,7 @@ func (db *GormRepository) UpdateClient(client domain.Client) (domain.Client, err
 			return t.Error
 		}
 		if t.RowsAffected == 0 {
-			return domain.ErrNotFound
+			return ferros.ErrNotFound
 		}
 		newClient = oldClient
 		return nil
@@ -76,7 +77,7 @@ func (db *GormRepository) GetClient(uuid string) (domain.Client, error) {
 	}
 
 	if client.ID == 0 {
-		return domain.Client{}, domain.ErrNotFound
+		return domain.Client{}, ferros.ErrNotFound
 	}
 
 	return client.RepoToDomain(), nil
@@ -122,7 +123,7 @@ func (db *GormRepository) DeleteClient(uuid string) error {
 		return tx.Error
 	}
 	if tx.RowsAffected == 0 {
-		return domain.ErrNotFound
+		return ferros.ErrNotFound
 	}
 
 	return nil

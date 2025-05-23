@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/jp/fidelity/internal/domain"
+	ferros "github.com/jp/fidelity/internal/pkg/errors"
 	"github.com/jp/fidelity/internal/repository/model"
 )
 
@@ -48,7 +49,7 @@ func (db *GormRepository) UpdateAttendant(attendant domain.Attendant) (domain.At
 			return t.Error
 		}
 		if t.RowsAffected == 0 {
-			return domain.ErrNotFound
+			return ferros.ErrNotFound
 		}
 		newAttendant = oldAttendant
 		return nil
@@ -76,7 +77,7 @@ func (db *GormRepository) GetAttendant(uuid string) (domain.Attendant, error) {
 	}
 
 	if attendant.ID == 0 {
-		return domain.Attendant{}, domain.ErrNotFound
+		return domain.Attendant{}, ferros.ErrNotFound
 	}
 
 	return attendant.RepoToDomain(), nil
@@ -122,7 +123,7 @@ func (db *GormRepository) DeleteAttendant(uuid string) error {
 		return tx.Error
 	}
 	if tx.RowsAffected == 0 {
-		return domain.ErrNotFound
+		return ferros.ErrNotFound
 	}
 
 	return nil
