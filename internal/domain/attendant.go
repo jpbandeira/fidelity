@@ -15,17 +15,33 @@ type Attendant struct {
 	CreatedAt time.Time
 }
 
+const (
+	AttendantEntity string = "attendant"
+)
+
 func (a Attendant) validateClient() error {
 	if a.Name == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Empty attendant name")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.NameField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: AttendantEntity,
+		}.Error())
 	}
 
 	if a.Email == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Empty attendant email")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.EmailField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: AttendantEntity,
+		}.Error())
 	}
 
 	if a.Phone == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Empty attendant phone")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.PhoneField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: AttendantEntity,
+		}.Error())
 	}
 
 	return nil
@@ -65,8 +81,21 @@ func (a actions) ListAttendants(params []Param) ([]Attendant, error) {
 
 func (a actions) DeleteAttendant(id string) error {
 	if id == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Empty attendant id")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.IdField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: AttendantEntity,
+		}.Error())
 	}
 
-	return a.db.DeleteAttendant(id)
+	err := a.db.DeleteAttendant(id)
+	if err != nil {
+		return fmt.Errorf(
+			ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
+				Entity: AttendantEntity,
+			}.Error(),
+		)
+	}
+
+	return nil
 }

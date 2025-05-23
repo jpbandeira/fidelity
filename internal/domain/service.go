@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"errors"
 	"fmt"
 	"time"
 
@@ -24,37 +25,73 @@ type ClientServiceTypeCount struct {
 	Count       int
 }
 
+const (
+	ServiceEntity string = "service"
+)
+
 func (s Service) validateService() error {
 	if s.Client.ID == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing client reference")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.IdField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ClientEntity,
+		}.Error())
 	}
 
 	if s.Attendant.ID == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing attendant reference")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.IdField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: AttendantEntity,
+		}.Error())
 	}
 
 	if s.ServiceType == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing service type")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.TypeField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ServiceEntity,
+		}.Error())
 	}
 
 	if s.PaymentType == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing payment type")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.PaymentTypeField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ServiceEntity,
+		}.Error())
 	}
 
 	if s.Description == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing service description")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.DescriptionField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ServiceEntity,
+		}.Error())
 	}
 
 	if s.ServiceDate.String() == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing service date")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.DateField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ServiceEntity,
+		}.Error())
 	}
 
 	if s.Price < 0 {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Service price cannot be negative")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.PriceField,
+			Msg:    ferros.CannotBeNegativeErrorString,
+			Entity: ServiceEntity,
+		}.Error())
 	}
 
 	if s.Price == 0 {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Service price should be greather than 0")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.PriceField,
+			Msg:    ferros.ShouldBeGreaterThanErrorString,
+			Entity: ServiceEntity,
+		}.Error())
 	}
 
 	return nil
@@ -68,11 +105,27 @@ func (a *actions) CreateService(service Service) (Service, error) {
 
 	client, err := a.db.GetClient(service.Client.ID)
 	if err != nil {
+		if errors.Is(err, ferros.ErrNotFound) {
+			return Service{}, fmt.Errorf(
+				ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
+					Entity: ClientEntity,
+				}.Error(),
+			)
+		}
+
 		return Service{}, err
 	}
 
 	attendant, err := a.db.GetAttendant(service.Attendant.ID)
 	if err != nil {
+		if errors.Is(err, ferros.ErrNotFound) {
+			return Service{}, fmt.Errorf(
+				ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
+					Entity: AttendantEntity,
+				}.Error(),
+			)
+		}
+
 		return Service{}, err
 	}
 
@@ -83,9 +136,27 @@ func (a *actions) CreateService(service Service) (Service, error) {
 }
 
 func (a *actions) ListServicesByClient(clientID string, params []Param) ([]Service, error) {
+	if clientID == "" {
+		return []Service{},
+			fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+				Field:  ferros.IdField,
+				Msg:    ferros.EmptyErrorString,
+				Entity: ClientEntity,
+			}.Error())
+	}
+
 	return a.db.ListServicesByClient(clientID, params)
 }
 
-func (a *actions) GetClientServicesCount(cliendUUID string) ([]ClientServiceTypeCount, error) {
-	return a.db.GetClientServicesCount(cliendUUID)
+func (a *actions) GetClientServicesCount(clientID string) ([]ClientServiceTypeCount, error) {
+	if clientID == "" {
+		return []ClientServiceTypeCount{},
+			fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+				Field:  ferros.IdField,
+				Msg:    ferros.EmptyErrorString,
+				Entity: ClientEntity,
+			}.Error())
+	}
+
+	return a.db.GetClientServicesCount(clientID)
 }

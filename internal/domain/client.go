@@ -16,32 +16,31 @@ type Client struct {
 }
 
 const (
-	nameField  string = "name"
-	emailField string = "email"
-	phoneField string = "phone"
-
-	emptyErrorString string = "Empty"
+	ClientEntity string = "client"
 )
 
 func (c Client) validateClient() error {
 	if c.Name == "" {
 		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
-			Field: nameField,
-			Msg:   emptyErrorString,
+			Field:  ferros.NameField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ClientEntity,
 		}.Error())
 	}
 
 	if c.Email == "" {
 		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
-			Field: emailField,
-			Msg:   emptyErrorString,
+			Field:  ferros.EmailField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ClientEntity,
 		}.Error())
 	}
 
 	if c.Phone == "" {
 		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
-			Field: emailField,
-			Msg:   emptyErrorString,
+			Field:  ferros.PhoneField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ClientEntity,
 		}.Error())
 	}
 
@@ -82,8 +81,21 @@ func (a actions) ListClients(params []Param) ([]Client, error) {
 
 func (a actions) DeleteClient(id string) error {
 	if id == "" {
-		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Empty client id")
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+			Field:  ferros.IdField,
+			Msg:    ferros.EmptyErrorString,
+			Entity: ClientEntity,
+		}.Error())
 	}
 
-	return a.db.DeleteClient(id)
+	err := a.db.DeleteClient(id)
+	if err != nil {
+		return fmt.Errorf(
+			ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
+				Entity: ClientEntity,
+			}.Error(),
+		)
+	}
+
+	return nil
 }

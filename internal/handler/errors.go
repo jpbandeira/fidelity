@@ -14,28 +14,29 @@ type HandlerError struct {
 }
 
 func newHandlerEror(err error) HandlerError {
-	var errorType *ferros.ValidationError
-	if errors.As(err, &errorType) {
+	var validationErr *ferros.ValidationError
+	if errors.As(err, &validationErr) {
 		if errors.Is(err, ferros.ErrInvalidParameter) {
 			return HandlerError{
-				msg:         errorType.Error(),
+				msg:         validationErr.Error(),
 				error_type:  ferros.ErrInvalidParameter.Error(),
 				status_code: http.StatusBadRequest,
 			}
 		}
+	}
 
-		if errors.Is(err, ferros.ErrNotFound) {
-			return HandlerError{
-				msg:         errorType.Error(),
-				error_type:  ferros.ErrNotFound.Error(),
-				status_code: http.StatusNotFound,
-			}
+	var nfErr *ferros.NotFoundError
+	if errors.As(err, &nfErr) {
+		return HandlerError{
+			msg:         nfErr.Error(),
+			error_type:  ferros.ErrNotFound.Error(),
+			status_code: http.StatusNotFound,
 		}
 	}
 
 	return HandlerError{
 		msg:         err.Error(),
-		error_type:  "Internal Server error",
+		error_type:  ferros.ErrInternalServerError.Error(),
 		status_code: http.StatusInternalServerError,
 	}
 }
