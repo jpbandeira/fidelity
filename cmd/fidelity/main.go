@@ -13,10 +13,10 @@ import (
 
 	"github.com/ilyakaznacheev/cleanenv"
 
-	"github.com/jp/fidelity/internal/api"
 	"github.com/jp/fidelity/internal/config"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/internal/infra/platform"
+	fhandler "github.com/jp/fidelity/internal/handler"
+	"github.com/jp/fidelity/internal/pkg/infraestructure/platform"
 	"github.com/jp/fidelity/internal/repository"
 )
 
@@ -80,8 +80,8 @@ func common(
 	logger *slog.Logger,
 ) *http.Server {
 	service := domain.ProviderService(repo)
-	handler := api.ProvideHandler(service, logger)
-	server := api.ProvideServer(handler, logger, cfg.Server.Host, cfg.Server.Port)
+	handler := fhandler.ProvideHandler(service, logger)
+	server := fhandler.ProvideServer(handler, logger, cfg.Server.Host, cfg.Server.Port)
 
 	return server
 }

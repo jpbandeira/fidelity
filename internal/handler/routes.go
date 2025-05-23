@@ -1,6 +1,6 @@
 // (C) Copyright 2023-2024 Hewlett Packard Enterprise Development LP
 
-package api
+package handler
 
 import (
 	"net/http"
