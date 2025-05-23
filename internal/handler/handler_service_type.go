@@ -5,24 +5,24 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/internal/pkg/apimodel"
+	"github.com/jp/fidelity/internal/pkg/dto"
 )
 
-func serviceTypeAPIToDomain(s apimodel.ServiceType) domain.ServiceType {
+func serviceTypeAPIToDomain(s dto.ServiceType) domain.ServiceType {
 	return domain.ServiceType{
 		Description: s.Description,
 	}
 }
 
-func serviceTypeDomainToAPI(s domain.ServiceType) apimodel.ServiceType {
-	return apimodel.ServiceType{
+func serviceTypeDomainToAPI(s domain.ServiceType) dto.ServiceType {
+	return dto.ServiceType{
 		Description: s.Description,
 	}
 }
 
 // createServiceType - Create a ServiceType
 // func (h *handler) createServiceType(c *gin.Context) {
-// 	var serviceTypeAPI apimodel.ServiceType
+// 	var serviceTypeAPI dto.ServiceType
 
 // 	err := c.BindJSON(&serviceTypeAPI)
 // 	if err != nil {
@@ -53,7 +53,7 @@ func (h *handler) listServiceType(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err)
 	}
 
-	var result = make([]apimodel.ServiceType, 0)
+	var result = make([]dto.ServiceType, 0)
 	for _, st := range serviceTypes {
 		result = append(result, serviceTypeDomainToAPI(st))
 	}

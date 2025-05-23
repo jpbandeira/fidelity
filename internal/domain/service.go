@@ -1,6 +1,11 @@
 package domain
 
-import "time"
+import (
+	"fmt"
+	"time"
+
+	ferros "github.com/jp/fidelity/internal/pkg/errors"
+)
 
 type Service struct {
 	ID          string
@@ -19,7 +24,48 @@ type ClientServiceTypeCount struct {
 	Count       int
 }
 
+func (s Service) validateService() error {
+	if s.Client.ID == "" {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing client reference")
+	}
+
+	if s.Attendant.ID == "" {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing attendant reference")
+	}
+
+	if s.ServiceType == "" {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing service type")
+	}
+
+	if s.PaymentType == "" {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing payment type")
+	}
+
+	if s.Description == "" {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing service description")
+	}
+
+	if s.ServiceDate.String() == "" {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Missing service date")
+	}
+
+	if s.Price < 0 {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Service price cannot be negative")
+	}
+
+	if s.Price == 0 {
+		return fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "Service price should be greather than 0")
+	}
+
+	return nil
+}
+
 func (a *actions) CreateService(service Service) (Service, error) {
+	err := service.validateService()
+	if err != nil {
+		return Service{}, err
+	}
+
 	client, err := a.db.GetClient(service.Client.ID)
 	if err != nil {
 		return Service{}, err

@@ -7,10 +7,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/internal/pkg/apimodel"
+	"github.com/jp/fidelity/internal/pkg/dto"
+	ferros "github.com/jp/fidelity/internal/pkg/errors"
 )
 
-func attendantAPIToDomain(c apimodel.Attendant) domain.Attendant {
+func attendantAPIToDomain(c dto.Attendant) domain.Attendant {
 	return domain.Attendant{
 		ID:    c.ID,
 		Name:  c.Name,
@@ -19,8 +20,8 @@ func attendantAPIToDomain(c apimodel.Attendant) domain.Attendant {
 	}
 }
 
-func attendantDomainToAPI(c domain.Attendant) apimodel.Attendant {
-	return apimodel.Attendant{
+func attendantDomainToAPI(c domain.Attendant) dto.Attendant {
+	return dto.Attendant{
 		ID:    c.ID,
 		Name:  c.Name,
 		Email: c.Email,
@@ -30,7 +31,7 @@ func attendantDomainToAPI(c domain.Attendant) apimodel.Attendant {
 
 // createAttendant - Create a Attendant
 func (h *handler) createAttendant(c *gin.Context) {
-	var attendantAPI apimodel.Attendant
+	var attendantAPI dto.Attendant
 
 	err := c.BindJSON(&attendantAPI)
 	if err != nil {
@@ -48,7 +49,7 @@ func (h *handler) createAttendant(c *gin.Context) {
 
 // updateAttendant - Update a Attendant
 func (h *handler) updateAttendant(c *gin.Context) {
-	var attendantAPI apimodel.Attendant
+	var attendantAPI dto.Attendant
 
 	err := c.BindJSON(&attendantAPI)
 	if err != nil {
@@ -78,7 +79,7 @@ func (h *handler) listAttendant(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, err)
 	}
 
-	var result = make([]apimodel.Attendant, 0)
+	var result = make([]dto.Attendant, 0)
 	for _, att := range attendants {
 		result = append(result, attendantDomainToAPI(att))
 	}
@@ -90,7 +91,7 @@ func (h *handler) listAttendant(c *gin.Context) {
 func (h *handler) deleteAttendant(c *gin.Context) {
 	id := c.Param(idParam)
 	if len(strings.TrimSpace(id)) == 0 {
-		c.JSON(http.StatusBadRequest, fmt.Errorf("empty id"))
+		c.JSON(http.StatusBadRequest, fmt.Errorf("%w: %s", ferros.ErrInvalidParameter, "empty id"))
 		return
 	}
 

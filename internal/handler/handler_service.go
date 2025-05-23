@@ -7,13 +7,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/internal/pkg/apimodel"
+	"github.com/jp/fidelity/internal/pkg/dto"
 )
 
-func serviceAPIToDomain(s apimodel.Service) domain.Service {
+func serviceAPIToDomain(s dto.Service) domain.Service {
 	return domain.Service{
 		ID:          s.ID,
-		Client:      clientAPIToDomain(s.Client),
+		Client:      clientDTOToDomain(s.Client),
 		Attendant:   attendantAPIToDomain(s.Attendant),
 		Price:       s.Price,
 		ServiceType: s.ServiceType,
@@ -23,10 +23,10 @@ func serviceAPIToDomain(s apimodel.Service) domain.Service {
 	}
 }
 
-func servicecDomainToAPI(s domain.Service) apimodel.Service {
-	return apimodel.Service{
+func servicecDomainToAPI(s domain.Service) dto.Service {
+	return dto.Service{
 		ID:          s.ID,
-		Client:      clientDomainToAPI(s.Client),
+		Client:      clientDomainToDTO(s.Client),
 		Attendant:   attendantDomainToAPI(s.Attendant),
 		Price:       s.Price,
 		ServiceType: s.ServiceType,
@@ -36,25 +36,25 @@ func servicecDomainToAPI(s domain.Service) apimodel.Service {
 	}
 }
 
-func serviceTypesCountDomainToAPI(csc domain.ClientServiceTypeCount) apimodel.ServiceTypeCount {
-	return apimodel.ServiceTypeCount{
+func serviceTypesCountDomainToAPI(csc domain.ClientServiceTypeCount) dto.ServiceTypeCount {
+	return dto.ServiceTypeCount{
 		ServiceType: csc.ServiceType.Description,
 		Count:       csc.Count,
 	}
 }
 
-func servicecDomainToAPIList(sList []domain.Service, cscList []domain.ClientServiceTypeCount) apimodel.ServiceList {
-	var serviceList = make([]apimodel.Service, 0)
+func servicecDomainToAPIList(sList []domain.Service, cscList []domain.ClientServiceTypeCount) dto.ServiceList {
+	var serviceList = make([]dto.Service, 0)
 	for _, s := range sList {
 		serviceList = append(serviceList, servicecDomainToAPI(s))
 	}
 
-	var serviceTypesCount = make([]apimodel.ServiceTypeCount, 0)
+	var serviceTypesCount = make([]dto.ServiceTypeCount, 0)
 	for _, csc := range cscList {
 		serviceTypesCount = append(serviceTypesCount, serviceTypesCountDomainToAPI(csc))
 	}
 
-	return apimodel.ServiceList{
+	return dto.ServiceList{
 		Items:             serviceList,
 		ServiceTypesCount: serviceTypesCount,
 	}
@@ -62,7 +62,7 @@ func servicecDomainToAPIList(sList []domain.Service, cscList []domain.ClientServ
 
 // createService - Create a Service
 func (h *handler) createService(c *gin.Context) {
-	var serviceAPI apimodel.Service
+	var serviceAPI dto.Service
 
 	err := c.BindJSON(&serviceAPI)
 	if err != nil {

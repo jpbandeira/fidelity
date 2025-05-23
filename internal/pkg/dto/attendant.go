@@ -1,4 +1,4 @@
-package apimodel
+package dto
 
 type Attendant struct {
 	ID    string `json:"id"`

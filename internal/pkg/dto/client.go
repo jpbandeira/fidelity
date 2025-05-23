@@ -1,4 +1,4 @@
-package apimodel
+package dto
 
 type Client struct {
 	ID    string `json:"id"`

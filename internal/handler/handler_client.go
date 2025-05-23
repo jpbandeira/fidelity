@@ -7,10 +7,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
-	"github.com/jp/fidelity/internal/pkg/apimodel"
+	"github.com/jp/fidelity/internal/pkg/dto"
 )
 
-func clientAPIToDomain(c apimodel.Client) domain.Client {
+func clientDTOToDomain(c dto.Client) domain.Client {
 	return domain.Client{
 		ID:    c.ID,
 		Name:  c.Name,
@@ -19,8 +19,8 @@ func clientAPIToDomain(c apimodel.Client) domain.Client {
 	}
 }
 
-func clientDomainToAPI(c domain.Client) apimodel.Client {
-	return apimodel.Client{
+func clientDomainToDTO(c domain.Client) dto.Client {
+	return dto.Client{
 		ID:    c.ID,
 		Name:  c.Name,
 		Email: c.Email,
@@ -30,7 +30,7 @@ func clientDomainToAPI(c domain.Client) apimodel.Client {
 
 // createClient - Create a Client
 func (h *handler) createClient(c *gin.Context) {
-	var clientAPI apimodel.Client
+	var clientAPI dto.Client
 
 	err := c.BindJSON(&clientAPI)
 	if err != nil {
@@ -38,17 +38,19 @@ func (h *handler) createClient(c *gin.Context) {
 		return
 	}
 
-	client, err := h.actions.CreateClient(clientAPIToDomain(clientAPI))
+	client, err := h.actions.CreateClient(clientDTOToDomain(clientAPI))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.status_code, httpError)
+		return
 	}
 
-	c.JSON(http.StatusCreated, clientDomainToAPI(client))
+	c.JSON(http.StatusCreated, clientDomainToDTO(client))
 }
 
 // updateClient - Update a Client
 func (h *handler) updateClient(c *gin.Context) {
-	var clientAPI apimodel.Client
+	var clientAPI dto.Client
 
 	err := c.BindJSON(&clientAPI)
 	if err != nil {
@@ -56,12 +58,14 @@ func (h *handler) updateClient(c *gin.Context) {
 		return
 	}
 
-	client, err := h.actions.UpdateClient(clientAPIToDomain(clientAPI))
+	client, err := h.actions.UpdateClient(clientDTOToDomain(clientAPI))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.status_code, httpError)
+		return
 	}
 
-	c.JSON(http.StatusOK, clientDomainToAPI(client))
+	c.JSON(http.StatusOK, clientDomainToDTO(client))
 }
 
 // listClient - List a list of Client
@@ -75,12 +79,14 @@ func (h *handler) listClient(c *gin.Context) {
 
 	clients, err := h.actions.ListClients(qps)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.status_code, httpError)
+		return
 	}
 
-	var result = make([]apimodel.Client, 0)
+	var result = make([]dto.Client, 0)
 	for _, c := range clients {
-		result = append(result, clientDomainToAPI(c))
+		result = append(result, clientDomainToDTO(c))
 	}
 
 	c.JSON(http.StatusOK, result)
@@ -96,7 +102,9 @@ func (h *handler) deleteCLient(c *gin.Context) {
 
 	err := h.actions.DeleteClient(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.status_code, httpError)
+		return
 	}
 
 	c.JSON(http.StatusNoContent, nil)
