@@ -41,7 +41,7 @@ func (h *handler) createClient(c *gin.Context) {
 	client, err := h.actions.CreateClient(clientDTOToDomain(clientAPI))
 	if err != nil {
 		httpError := newHandlerEror(err)
-		c.JSON(httpError.status_code, httpError)
+		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
@@ -61,7 +61,7 @@ func (h *handler) updateClient(c *gin.Context) {
 	client, err := h.actions.UpdateClient(clientDTOToDomain(clientAPI))
 	if err != nil {
 		httpError := newHandlerEror(err)
-		c.JSON(httpError.status_code, httpError)
+		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
@@ -80,7 +80,7 @@ func (h *handler) listClient(c *gin.Context) {
 	clients, err := h.actions.ListClients(qps)
 	if err != nil {
 		httpError := newHandlerEror(err)
-		c.JSON(httpError.status_code, httpError)
+		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
@@ -103,7 +103,7 @@ func (h *handler) deleteCLient(c *gin.Context) {
 	err := h.actions.DeleteClient(id)
 	if err != nil {
 		httpError := newHandlerEror(err)
-		c.JSON(httpError.status_code, httpError)
+		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 

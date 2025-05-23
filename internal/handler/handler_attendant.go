@@ -41,7 +41,9 @@ func (h *handler) createAttendant(c *gin.Context) {
 
 	attendant, err := h.actions.CreateAttendant(attendantAPIToDomain(attendantAPI))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
+		return
 	}
 
 	c.JSON(http.StatusCreated, attendantDomainToAPI(attendant))
@@ -59,7 +61,9 @@ func (h *handler) updateAttendant(c *gin.Context) {
 
 	attendant, err := h.actions.UpdateAttendant(attendantAPIToDomain(attendantAPI))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
+		return
 	}
 
 	c.JSON(http.StatusOK, attendantDomainToAPI(attendant))
@@ -76,7 +80,9 @@ func (h *handler) listAttendant(c *gin.Context) {
 
 	attendants, err := h.actions.ListAttendants(qps)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
+		return
 	}
 
 	var result = make([]dto.Attendant, 0)
@@ -97,7 +103,9 @@ func (h *handler) deleteAttendant(c *gin.Context) {
 
 	err := h.actions.DeleteAttendant(id)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
+		return
 	}
 
 	c.JSON(http.StatusNoContent, nil)

@@ -21,7 +21,7 @@ const (
 
 func (c Client) validateClient() error {
 	if c.Name == "" {
-		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.NameField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ClientEntity,
@@ -29,7 +29,7 @@ func (c Client) validateClient() error {
 	}
 
 	if c.Email == "" {
-		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.EmailField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ClientEntity,
@@ -37,7 +37,7 @@ func (c Client) validateClient() error {
 	}
 
 	if c.Phone == "" {
-		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.PhoneField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ClientEntity,
@@ -81,7 +81,7 @@ func (a actions) ListClients(params []Param) ([]Client, error) {
 
 func (a actions) DeleteClient(id string) error {
 	if id == "" {
-		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, ferros.ValidationError{
+		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.IdField,
 			Msg:    ferros.EmptyErrorString,
 			Entity: ClientEntity,
@@ -91,7 +91,7 @@ func (a actions) DeleteClient(id string) error {
 	err := a.db.DeleteClient(id)
 	if err != nil {
 		return fmt.Errorf(
-			ferros.ErrFormatString, ferros.ErrNotFound, ferros.NotFoundError{
+			ferros.ErrFormatString, ferros.ErrNotFound, &ferros.NotFoundError{
 				Entity: ClientEntity,
 			},
 		)

@@ -72,7 +72,8 @@ func (h *handler) createService(c *gin.Context) {
 
 	service, err := h.actions.CreateService(serviceAPIToDomain(serviceAPI))
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err.Error())
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
@@ -96,12 +97,16 @@ func (h *handler) listClientServices(c *gin.Context) {
 
 	services, err := h.actions.ListServicesByClient(clientID, qps)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
+		return
 	}
 
 	countOfServiceTypes, err := h.actions.GetClientServicesCount(clientID)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
+		return
 	}
 
 	c.JSON(http.StatusOK, servicecDomainToAPIList(services, countOfServiceTypes))

@@ -8,9 +8,9 @@ import (
 )
 
 type HandlerError struct {
-	msg         string
-	error_type  string
-	status_code int
+	Msg        string `json:"msg"`
+	ErrorType  string `json:"errorType"`
+	StatusCode int    `json:"-"`
 }
 
 func newHandlerEror(err error) HandlerError {
@@ -18,9 +18,9 @@ func newHandlerEror(err error) HandlerError {
 	if errors.As(err, &validationErr) {
 		if errors.Is(err, ferros.ErrInvalidParameter) {
 			return HandlerError{
-				msg:         validationErr.Error(),
-				error_type:  ferros.ErrInvalidParameter.Error(),
-				status_code: http.StatusBadRequest,
+				Msg:        validationErr.Error(),
+				ErrorType:  ferros.ErrInvalidParameter.Error(),
+				StatusCode: http.StatusBadRequest,
 			}
 		}
 	}
@@ -28,15 +28,15 @@ func newHandlerEror(err error) HandlerError {
 	var nfErr *ferros.NotFoundError
 	if errors.As(err, &nfErr) {
 		return HandlerError{
-			msg:         nfErr.Error(),
-			error_type:  ferros.ErrNotFound.Error(),
-			status_code: http.StatusNotFound,
+			Msg:        nfErr.Error(),
+			ErrorType:  ferros.ErrNotFound.Error(),
+			StatusCode: http.StatusNotFound,
 		}
 	}
 
 	return HandlerError{
-		msg:         err.Error(),
-		error_type:  ferros.ErrInternalServerError.Error(),
-		status_code: http.StatusInternalServerError,
+		Msg:        err.Error(),
+		ErrorType:  ferros.ErrInternalServerError.Error(),
+		StatusCode: http.StatusInternalServerError,
 	}
 }
