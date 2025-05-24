@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fidelity-app
+  namespace: fidelity
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fidelity
+  template:
+    metadata:
+      labels:
+        app: fidelity
+    spec:
+      containers:
+        - name: fidelity
+          image: fidelity:local
+          command: ["./fidelity"]
+          args: ["--configpath", "/app/config/local_env.yaml"]
+          ports:
+            - containerPort: 8080
