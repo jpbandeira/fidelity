@@ -1,6 +1,12 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: fidelity
+
 resources:
-  - fidelity-deployment.yaml
-  - fidelity-service.yaml
-  - postgres-deployment.yaml
-  - postgres-service.yaml
-  - secret.yaml
+  - namespace.yaml              # cria namespace fidelity
+  - postgres-pvc.yaml           # PVC para persistência do Postgres
+  - postgres-deployment.yaml    # Deployment do Postgres
+  - fidelity-deployment.yaml    # Deployment do backend fidelity
+  - fidelity-service.yaml       # Service para backend
+  - postgres-service.yaml       # Service para Postgres (se usar)

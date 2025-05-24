@@ -27,6 +27,9 @@ WORKDIR /app
 # Copia o binário compilado da stage anterior
 COPY --from=builder /app/fidelity .
 
+# Copia o arquivo de configuração local_env.yaml para dentro da imagem
+COPY config/local_env.yaml ./config/local_env.yaml
+
 # Expõe a porta padrão da aplicação
 EXPOSE 8080
 
