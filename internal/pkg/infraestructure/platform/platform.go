@@ -14,6 +14,7 @@ type Type string
 const (
 	UnknownPlatform Type = ""
 	DevEnv          Type = "dev-env"
+	LocalEnv        Type = "local-env"
 	AWS             Type = "aws"
 	COP             Type = "cop"
 )

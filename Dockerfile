@@ -2,7 +2,7 @@
 FROM golang:1.22.5-alpine AS builder
 
 # Dependências para compilação estática (gcc, musl-dev)
-RUN apk add --no-cache build-base
+RUN apk add --no-cache build-base ca-certificates
 
 WORKDIR /app
 
@@ -17,10 +17,7 @@ COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o fidelity ./cmd/fidelity
 
 # Stage 2: Imagem final minimalista para rodar o binário
-FROM alpine:latest
-
-# Instala certificados para TLS se necessário
-RUN apk add --no-cache ca-certificates
+FROM alpine:3.18
 
 WORKDIR /app
 

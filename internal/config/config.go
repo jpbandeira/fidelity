@@ -16,9 +16,8 @@ type ServerConfig struct {
 
 // Server defines the host address
 type Server struct {
-	Host          string `yaml:"host"`
-	Port          int    `yaml:"port"`
-	SpireAudience string `yaml:"spire_audience"`
+	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
 }
 
 // Postgres represents the Postgres database configuration.

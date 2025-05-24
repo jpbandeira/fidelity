@@ -39,8 +39,12 @@ func main() {
 	}
 
 	logger.Info("Init server")
-
-	server := devEnvInject(serverConfig)
+	var server *http.Server
+	if serverConfig.Platform == platform.DevEnv {
+		server = devEnvInject(serverConfig)
+	} else {
+		server = localEnvInject(serverConfig)
+	}
 
 	addShutdownHook(func(s os.Signal) {
 		logger.Info("Received Signal, stopping gin server")
@@ -89,8 +93,17 @@ func common(
 func devEnvInject(cfg config.ServerConfig) *http.Server {
 	logger := slog.New(slog.Default().Handler())
 	logger.Debug("Inject Dev Env")
-	devPlatform := platform.ProvideDevEnvPlatform(logger)
-	postgresRepository := repository.ProvideGormRepository(logger, cfg.Postgres, devPlatform)
+	platform := platform.ProvideDevEnvPlatform(logger)
+	postgresRepository := repository.ProvideGormRepository(logger, cfg.Postgres, platform)
+
+	return common(cfg, postgresRepository, logger)
+}
+
+func localEnvInject(cfg config.ServerConfig) *http.Server {
+	logger := slog.New(slog.Default().Handler())
+	logger.Debug("Inject Local Env")
+	platform := platform.ProvideLocalEnvPlatform(logger)
+	postgresRepository := repository.ProvideGormRepository(logger, cfg.Postgres, platform)
 
 	return common(cfg, postgresRepository, logger)
 }

@@ -1,15 +1,16 @@
-app:
+server:
   port: 8080
-  base_url: "http://192.168.0.100:8080"
-  env: "local"
-  secret_key: "supersecretkey"
+  host: "http://192.168.0.100:8080"
 
-database:
+platform: "local-env"
+database_type: "postgres"
+
+postgres:
   type: "postgres"
   host: "localhost"
-  port: 5432
-  user: "fidelity_user"
-  password: "pass"
+  username: "fidelity"
+  password: "suaSenhaSeguraAqui"
+  port: "5432"
   name: "fidelity"
   sslmode: "disable"
 

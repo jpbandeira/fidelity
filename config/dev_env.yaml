@@ -2,16 +2,18 @@ server:
   host: localhost
   port: 9901
 
-log:
-  level: "debug"
 
 platform: "dev-env"
 database_type: "postgres"
 
 postgres:
+  type: "postgres"
+  host: "localhost"
   username: "postgres"
   password: "postgres"
-  host: "localhost"
   port: "6543"
-  database: "fidelity"
+  name: "fidelity"
   sslmode: "disable" 
+
+log:
+  level: "debug"
