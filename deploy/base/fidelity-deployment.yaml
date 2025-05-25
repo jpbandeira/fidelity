@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: fidelity
-          image: fidelity:local
+          image: fidelity:20250525-1549
           imagePullPolicy: Never
           command: ["./fidelity"]
           args: ["--configpath", "/app/config/local_env.yaml"]
@@ -28,7 +28,7 @@ spec:
             - containerPort: 8080
           readinessProbe:
             httpGet:
-              path: /
+              path: /health
               port: 8080
             initialDelaySeconds: 2
             periodSeconds: 5
