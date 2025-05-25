@@ -62,14 +62,6 @@ func (s Service) validateService() error {
 		})
 	}
 
-	if s.Description == "" {
-		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
-			Field:  ferros.DescriptionField,
-			Msg:    ferros.EmptyErrorString,
-			Entity: ServiceEntity,
-		})
-	}
-
 	if s.ServiceDate.String() == "" {
 		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.DateField,

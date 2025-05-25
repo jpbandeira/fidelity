@@ -104,6 +104,12 @@ func (h *handler) serviceTypeRoutes() Routes {
 			Pattern:     serviceTypeEP,
 			HandlerFunc: h.listServiceType,
 		},
+		{
+			Name:        "CreateServiceType",
+			Method:      http.MethodPost,
+			Pattern:     serviceTypeEP,
+			HandlerFunc: h.createServiceType,
+		},
 	}
 }
 

@@ -16,6 +16,7 @@ type Actions interface {
 	GetClientServicesCount(string) ([]ClientServiceTypeCount, error)
 
 	ListServiceTypes([]Param) ([]ServiceType, error)
+	CreateServiceType(st ServiceType) (ServiceType, error)
 }
 
 type actions struct {

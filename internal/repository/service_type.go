@@ -3,25 +3,25 @@ package repository
 import (
 	"github.com/jp/fidelity/internal/domain"
 	"github.com/jp/fidelity/internal/repository/model"
+	"gorm.io/gorm"
 )
 
-// func (db *GormRepository) CreateServiceType(serviceType domain.ServiceType) (domain.ServiceType, error) {
-// 	var serviceTypeModel model.ServiceType
+func (db *GormRepository) CreateServiceType(st domain.ServiceType) (domain.ServiceType, error) {
+	var serviceTypeModel model.ServiceType
 
-// 	err := db.Transaction(func(tx *gorm.DB) (err error) {
+	err := db.Transaction(func(tx *gorm.DB) (err error) {
+		serviceTypeModel = model.ServiceType{
+			Description: st.Description,
+		}
 
-// 		serviceTypeModel = model.ServiceType{
-// 			Description: serviceType.Description,
-// 		}
+		return db.Create(&serviceTypeModel).Error
+	})
+	if err != nil {
+		return domain.ServiceType{}, err
+	}
 
-// 		return db.Create(&serviceTypeModel).Error
-// 	})
-// 	if err != nil {
-// 		return domain.ServiceType{}, err
-// 	}
-
-// 	return serviceTypeModel.RepoToDomain(), nil
-// }
+	return serviceTypeModel.RepoToDomain(), nil
+}
 
 func (db *GormRepository) ListServiceTypes(params []domain.Param) ([]domain.ServiceType, error) {
 	var serviceTypes []model.ServiceType

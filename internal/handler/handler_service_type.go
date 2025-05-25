@@ -8,36 +8,36 @@ import (
 	"github.com/jp/fidelity/internal/pkg/dto"
 )
 
-func serviceTypeAPIToDomain(s dto.ServiceType) domain.ServiceType {
+func serviceTypeDTOToDomain(s dto.ServiceType) domain.ServiceType {
 	return domain.ServiceType{
 		Description: s.Description,
 	}
 }
 
-func serviceTypeDomainToAPI(s domain.ServiceType) dto.ServiceType {
+func serviceTypeDomainToDTO(s domain.ServiceType) dto.ServiceType {
 	return dto.ServiceType{
 		Description: s.Description,
 	}
 }
 
 // createServiceType - Create a ServiceType
-// func (h *handler) createServiceType(c *gin.Context) {
-// 	var serviceTypeAPI dto.ServiceType
+func (h *handler) createServiceType(c *gin.Context) {
+	var serviceTypeDTO dto.ServiceType
 
-// 	err := c.BindJSON(&serviceTypeAPI)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, err.Error())
-// 		return
-// 	}
+	err := c.BindJSON(&serviceTypeDTO)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
 
-// 	serviceType, err := h.actions.CreateServiceType(serviceTypeTypeAPIToDomain(serviceTypeAPI))
-// 	if err != nil {
-// 		c.JSON(http.StatusInternalServerError, err.Error())
-// 		return
-// 	}
+	serviceType, err := h.actions.CreateServiceType(serviceTypeDTOToDomain(serviceTypeDTO))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, err.Error())
+		return
+	}
 
-// 	c.JSON(http.StatusCreated, serviceTypecDomainToAPI(serviceType))
-// }
+	c.JSON(http.StatusCreated, serviceTypeDomainToDTO(serviceType))
+}
 
 // listServiceType - List a list of ServiceTypes
 func (h *handler) listServiceType(c *gin.Context) {
@@ -55,7 +55,7 @@ func (h *handler) listServiceType(c *gin.Context) {
 
 	var result = make([]dto.ServiceType, 0)
 	for _, st := range serviceTypes {
-		result = append(result, serviceTypeDomainToAPI(st))
+		result = append(result, serviceTypeDomainToDTO(st))
 	}
 
 	c.JSON(http.StatusOK, result)
