@@ -1,17 +1,16 @@
 server:
+  host: 0.0.0.0
   port: 8080
-  host: "http://192.168.0.100:8080"
 
 platform: "local-env"
 database_type: "postgres"
 
 postgres:
-  type: "postgres"
-  host: "localhost"
+  host: "postgres"
+  port: "5432"
+  database: "fidelity"
   username: "fidelity"
   password: "suaSenhaSeguraAqui"
-  port: "5432"
-  name: "fidelity"
   sslmode: "disable"
 
 log:

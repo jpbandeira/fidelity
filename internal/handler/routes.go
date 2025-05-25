@@ -107,6 +107,17 @@ func (h *handler) serviceTypeRoutes() Routes {
 	}
 }
 
+func (h *handler) healthRoutes() Routes {
+	return Routes{
+		{
+			Name:        "Health",
+			Method:      http.MethodGet,
+			Pattern:     "/health",
+			HandlerFunc: h.healthHandler,
+		},
+	}
+}
+
 // Routes builds the server endpoint route to handlers
 func (h *handler) Routes() Routes {
 	rts := Routes{}
@@ -114,6 +125,7 @@ func (h *handler) Routes() Routes {
 	rts = append(rts, h.attendantRoutes()...)
 	rts = append(rts, h.serviceRoutes()...)
 	rts = append(rts, h.serviceTypeRoutes()...)
+	rts = append(rts, h.healthRoutes()...)
 
 	return rts
 }

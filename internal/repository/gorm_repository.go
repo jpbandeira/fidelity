@@ -28,10 +28,11 @@ var (
 	gormRepoOnce sync.Once
 )
 
-func databaseModels() []interface{} {
-	return []interface{}{
+func databaseModels() []any {
+	return []any{
 		model.ClientServiceTypeCount{},
 		model.Client{},
+		model.Attendant{},
 		model.Service{},
 	}
 }
