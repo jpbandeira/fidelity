@@ -11,8 +11,8 @@ type Actions interface {
 	ListAttendants([]Param) ([]Attendant, error)
 	DeleteAttendant(string) error
 
-	CreateServiceBatch(ServiceBatch) (ServiceBatch, error)
-	ListServices([]Param) (ServiceBatch, error)
+	// CreateServiceBatch(ServiceBatch) (ServiceBatch, error)
+	ListServices([]Param) ([]Service, error)
 	GetClientServicesCount(string) ([]ClientServiceTypeCount, error)
 
 	ListServiceTypes([]Param) ([]ServiceType, error)

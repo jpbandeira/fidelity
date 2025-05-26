@@ -16,9 +16,8 @@ const (
 	singleClientEP    string = clientEP + "/:" + idParam
 	singleAttendantEP string = attendantEP + "/:" + idParam
 
-	serviceEP        string = baseEP + "/services"
-	clientServicesRP string = singleClientEP + "/services"
-	serviceTypeEP    string = baseEP + "/service-types"
+	serviceEP     string = baseEP + "/services"
+	serviceTypeEP string = baseEP + "/service-types"
 )
 
 func (h *handler) clientRoutes() Routes {
@@ -81,12 +80,12 @@ func (h *handler) attendantRoutes() Routes {
 
 func (h *handler) serviceRoutes() Routes {
 	return Routes{
-		{
-			Name:        "CreateServiceInBatch",
-			Method:      http.MethodPost,
-			Pattern:     serviceEP,
-			HandlerFunc: h.createServiceBatch,
-		},
+		// {
+		// 	Name:        "CreateServiceInBatch",
+		// 	Method:      http.MethodPost,
+		// 	Pattern:     serviceEP,
+		// 	HandlerFunc: h.createServiceBatch,
+		// },
 		{
 			Name:        "ListServices",
 			Method:      http.MethodGet,

@@ -11,7 +11,7 @@ func (db *GormRepository) CreateServiceType(st domain.ServiceType) (domain.Servi
 
 	err := db.Transaction(func(tx *gorm.DB) (err error) {
 		serviceTypeModel = model.ServiceType{
-			Description: st.Description,
+			Name: st.Name,
 		}
 
 		return db.Create(&serviceTypeModel).Error

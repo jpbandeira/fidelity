@@ -7,11 +7,11 @@ import (
 
 type ServiceType struct {
 	gorm.Model
-	Description string `gorm:"not null"`
+	Name string `gorm:"not null"`
 }
 
 func (s ServiceType) RepoToDomain() domain.ServiceType {
 	return domain.ServiceType{
-		Description: s.Description,
+		Name: s.Name,
 	}
 }

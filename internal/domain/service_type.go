@@ -7,7 +7,7 @@ import (
 )
 
 type ServiceType struct {
-	Description string
+	Name string
 }
 
 type ServiceTypeList struct {
@@ -21,7 +21,7 @@ const (
 )
 
 func (st ServiceType) validateServiceType() error {
-	if st.Description == "" {
+	if st.Name == "" {
 		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.DescriptionField,
 			Msg:    ferros.EmptyErrorString,

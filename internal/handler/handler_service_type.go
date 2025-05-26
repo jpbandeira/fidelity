@@ -10,13 +10,13 @@ import (
 
 func serviceTypeDTOToDomain(s dto.ServiceType) domain.ServiceType {
 	return domain.ServiceType{
-		Description: s.Description,
+		Name: s.Description,
 	}
 }
 
 func serviceTypeDomainToDTO(s domain.ServiceType) dto.ServiceType {
 	return dto.ServiceType{
-		Description: s.Description,
+		Description: s.Name,
 	}
 }
 
