@@ -67,13 +67,14 @@ func ServiceRepoToDomain(services []Service) []domain.Service {
 	return serviceList
 }
 
-func (csc ServiceSummary) RepoToDomain() domain.ClientServiceTypeCount {
-	return domain.ClientServiceTypeCount{
+func (csc ServiceSummary) RepoToDomain() domain.ServiceSummary {
+	return domain.ServiceSummary{
 		ServiceType: domain.ServiceType{
 			Name: csc.ServiceType.Name,
 		},
-		Client: csc.Client.RepoToDomain(),
-		Count:  csc.Count,
+		Client:     csc.Client.RepoToDomain(),
+		Count:      csc.Count,
+		TotalPrice: csc.TotalPrice,
 	}
 }
 

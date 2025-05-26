@@ -111,14 +111,14 @@ func (db *GormRepository) CreateAppointment(appt domain.Appointment) (domain.App
 	return modelAppointment.RepoToDomain(), nil
 }
 
-func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.ClientServiceTypeCount, error) {
+func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.ServiceSummary, error) {
 	clientServicesCount := []model.ServiceSummary{}
 	err := db.Preload("Client").Preload("ServiceType").Where("client_uuid = ?", cliendUUID).Find(&clientServicesCount).Error
 	if err != nil {
-		return []domain.ClientServiceTypeCount{}, err
+		return []domain.ServiceSummary{}, err
 	}
 
-	var result []domain.ClientServiceTypeCount
+	var result []domain.ServiceSummary
 	for _, csc := range clientServicesCount {
 		result = append(result, csc.RepoToDomain())
 	}

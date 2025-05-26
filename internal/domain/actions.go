@@ -13,7 +13,7 @@ type Actions interface {
 
 	CreateAppointment(appt Appointment) (Appointment, error)
 	ListServices([]Param) ([]Service, error)
-	GetClientServicesCount(string) ([]ClientServiceTypeCount, error)
+	GetServiceSummary(string) ([]ServiceSummary, error)
 
 	ListServiceTypes([]Param) ([]ServiceType, error)
 	CreateServiceType(st ServiceType) (ServiceType, error)

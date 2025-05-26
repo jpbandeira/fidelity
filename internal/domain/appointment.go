@@ -25,10 +25,11 @@ type Service struct {
 	Attendant   Attendant
 }
 
-type ClientServiceTypeCount struct {
+type ServiceSummary struct {
 	ServiceType ServiceType
 	Client      Client
 	Count       int
+	TotalPrice  float32
 }
 
 const (
@@ -120,9 +121,9 @@ func (a *actions) ListServices(params []Param) ([]Service, error) {
 	return a.db.ListServices(params)
 }
 
-func (a *actions) GetClientServicesCount(clientID string) ([]ClientServiceTypeCount, error) {
+func (a *actions) GetServiceSummary(clientID string) ([]ServiceSummary, error) {
 	if clientID == "" {
-		return []ClientServiceTypeCount{},
+		return []ServiceSummary{},
 			fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 				Field:  ferros.IdField,
 				Msg:    ferros.EmptyErrorString,

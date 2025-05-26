@@ -28,12 +28,13 @@ func servicesDomainToServicesDTO(servicesDomain []domain.Service) []dto.Service 
 	return services
 }
 
-func servicesDomainToServiceListResponseDTO(services []domain.Service, csTcsDomain []domain.ClientServiceTypeCount) dto.ServiceListResponse {
+func servicesDomainToServiceListResponseDTO(services []domain.Service, csTcsDomain []domain.ServiceSummary) dto.ServiceListResponse {
 	var serviceSummaries = make([]dto.ServiceSummary, 0)
 	for _, csc := range csTcsDomain {
 		serviceSummaries = append(serviceSummaries, dto.ServiceSummary{
-			Name:  csc.ServiceType.Name,
-			Count: csc.Count,
+			Name:       csc.ServiceType.Name,
+			Count:      csc.Count,
+			TotalPrice: csc.TotalPrice,
 		})
 	}
 
@@ -150,7 +151,7 @@ func (h *handler) listServices(c *gin.Context) {
 	}
 
 	clientID := services[0].Client.ID
-	countOfServiceTypes, err := h.actions.GetClientServicesCount(clientID)
+	countOfServiceTypes, err := h.actions.GetServiceSummary(clientID)
 	if err != nil {
 		httpError := newHandlerEror(err)
 		c.JSON(httpError.StatusCode, httpError)

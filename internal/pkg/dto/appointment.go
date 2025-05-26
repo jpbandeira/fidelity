@@ -23,8 +23,9 @@ type Service struct {
 }
 
 type ServiceSummary struct {
-	Name  string `json:"name"`
-	Count int    `json:"count"`
+	Name       string  `json:"name"`
+	Count      int     `json:"count"`
+	TotalPrice float32 `json:"totalPrice"`
 }
 
 type ServiceListResponse struct {
