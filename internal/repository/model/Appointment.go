@@ -75,3 +75,26 @@ func (csc ClientServiceTypeCount) RepoToDomain() domain.ClientServiceTypeCount {
 		Count:  csc.ServiceCount,
 	}
 }
+
+func (a Appointment) RepoToDomain() domain.Appointment {
+	services := make([]domain.Service, 0, len(a.Services))
+	for _, s := range a.Services {
+		services = append(services, domain.Service{
+			ID:          s.UUID,
+			Name:        s.ServiceType.Name,
+			Price:       s.Price,
+			PaymentType: s.PaymentType.String(),
+			Description: s.Description,
+			ServiceDate: s.ServiceDate,
+			Client:      a.Client.RepoToDomain(),
+			Attendant:   a.Attendant.RepoToDomain(),
+		})
+	}
+
+	return domain.Appointment{
+		ID:        a.UUID,
+		Client:    a.Client.RepoToDomain(),
+		Attendant: a.Attendant.RepoToDomain(),
+		Services:  services,
+	}
+}

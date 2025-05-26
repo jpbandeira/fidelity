@@ -71,25 +71,7 @@ package handler
 // 	}
 // }
 
-// // createServiceBatch - Create a Service
-// func (h *handler) createServiceBatch(c *gin.Context) {
-// 	var serviceBatchDTO dto.ServiceBatch
 
-// 	err := c.BindJSON(&serviceBatchDTO)
-// 	if err != nil {
-// 		c.JSON(http.StatusBadRequest, err.Error())
-// 		return
-// 	}
-
-// 	serviceBatch, err := h.actions.CreateServiceBatch(serviceBatchDTOToDomain(serviceBatchDTO))
-// 	if err != nil {
-// 		httpError := newHandlerEror(err)
-// 		c.JSON(httpError.StatusCode, httpError)
-// 		return
-// 	}
-
-// 	c.JSON(http.StatusCreated, serviceBatchDomainToDTO(serviceBatch))
-// }
 
 // // listServices - List Services
 // func (h *handler) listServices(c *gin.Context) {

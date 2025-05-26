@@ -13,7 +13,7 @@ type Repository interface {
 	GetAttendant(string) (Attendant, error)
 	DeleteAttendant(string) error
 
-	// CreateServiceBatch(ServiceBatch) (ServiceBatch, error)
+	CreateAppointment(appt Appointment) (Appointment, error)
 	ListServices([]Param) ([]Service, error)
 	GetClientServicesCount(string) ([]ClientServiceTypeCount, error)
 

@@ -19,7 +19,6 @@ const (
 	PhoneField string = "phone"
 	IdField    string = "id"
 
-	TypeField        string = "type"
 	PaymentTypeField string = "payment type"
 	DescriptionField string = "description"
 	DateField        string = "date"

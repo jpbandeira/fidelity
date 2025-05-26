@@ -43,6 +43,89 @@ func servicesDomainToServiceListResponseDTO(services []domain.Service, csTcsDoma
 	}
 }
 
+func dtoToDomainAppointment(appt dto.Appointment) domain.Appointment {
+	services := make([]domain.Service, 0, len(appt.Services))
+	for _, s := range appt.Services {
+		services = append(services, domain.Service{
+			ID:          s.ID,
+			Name:        s.Name,
+			Price:       s.Price,
+			PaymentType: s.PaymentType,
+			Description: s.Description,
+			ServiceDate: s.ServiceDate,
+			Client: domain.Client{
+				ID:   s.ClientID,
+				Name: s.ClientName,
+			},
+			Attendant: domain.Attendant{
+				ID:   s.AttendantID,
+				Name: s.AttendantName,
+			},
+		})
+	}
+
+	return domain.Appointment{
+		ID: appt.ID,
+		Client: domain.Client{
+			ID:   appt.Client.ID,
+			Name: appt.Client.Name,
+		},
+		Attendant: domain.Attendant{
+			ID:   appt.Attendant.ID,
+			Name: appt.Attendant.Name,
+		},
+		Services: services,
+	}
+}
+
+func domainToDTOAppointment(appt domain.Appointment) dto.Appointment {
+	services := make([]dto.Service, 0, len(appt.Services))
+	for _, s := range appt.Services {
+		services = append(services, dto.Service{
+			ID:          s.ID,
+			Name:        s.Name,
+			Price:       s.Price,
+			PaymentType: s.PaymentType,
+			Description: s.Description,
+			ServiceDate: s.ServiceDate,
+		})
+	}
+
+	return dto.Appointment{
+		ID: appt.ID,
+		Client: dto.Client{
+			ID:    appt.Client.ID,
+			Name:  appt.Client.Name,
+			Email: appt.Client.Email,
+			Phone: appt.Client.Phone,
+		},
+		Attendant: dto.Attendant{
+			ID:    appt.Attendant.ID,
+			Name:  appt.Attendant.Name,
+			Email: appt.Attendant.Email,
+			Phone: appt.Attendant.Phone,
+		},
+		Services: services,
+	}
+}
+
+func (h *handler) createAppointment(c *gin.Context) {
+	var apptDTO dto.Appointment
+	if err := c.ShouldBindJSON(&apptDTO); err != nil {
+		c.JSON(http.StatusBadRequest, err.Error())
+		return
+	}
+
+	appt, err := h.actions.CreateAppointment(dtoToDomainAppointment(apptDTO))
+	if err != nil {
+		httpError := newHandlerEror(err)
+		c.JSON(httpError.StatusCode, httpError)
+		return
+	}
+
+	c.JSON(http.StatusCreated, domainToDTOAppointment(appt))
+}
+
 // listServices - List Services
 func (h *handler) listServices(c *gin.Context) {
 	qps := []domain.Param{}
@@ -60,7 +143,10 @@ func (h *handler) listServices(c *gin.Context) {
 	}
 
 	if len(services) == 0 {
-		c.JSON(http.StatusOK, dto.ServiceListResponse{})
+		c.JSON(http.StatusOK, dto.ServiceListResponse{
+			Services:         []dto.Service{},
+			ServiceSummaries: []dto.ServiceSummary{},
+		})
 	}
 
 	clientID := services[0].Client.ID
