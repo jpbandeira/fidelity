@@ -39,14 +39,15 @@ type Service struct {
 	ServiceDate time.Time `gorm:"not null"`
 }
 
-type ClientServiceTypeCount struct {
+type ServiceSummary struct {
 	ServiceTypeID uint        `gorm:"not null;index:idx_service_type_service_count;uniqueIndex:idx_service_type_client;"`
 	ServiceType   ServiceType `gorm:"foreignKey:ServiceTypeID;references:ID;constraint:OnUpdate:CASCADE;"`
 
 	ClientUUID string `gorm:"not null;index:idx_user_client_service_count;uniqueIndex:idx_service_type_client;"`
 	Client     Client `gorm:"foreignKey:ClientUUID;references:UUID;constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 
-	ServiceCount int `gorm:"not null"`
+	Count      int     `gorm:"not null"`
+	TotalPrice float32 `gorm:"not null"`
 }
 
 func ServiceRepoToDomain(services []Service) []domain.Service {
@@ -66,13 +67,13 @@ func ServiceRepoToDomain(services []Service) []domain.Service {
 	return serviceList
 }
 
-func (csc ClientServiceTypeCount) RepoToDomain() domain.ClientServiceTypeCount {
+func (csc ServiceSummary) RepoToDomain() domain.ClientServiceTypeCount {
 	return domain.ClientServiceTypeCount{
 		ServiceType: domain.ServiceType{
 			Name: csc.ServiceType.Name,
 		},
 		Client: csc.Client.RepoToDomain(),
-		Count:  csc.ServiceCount,
+		Count:  csc.Count,
 	}
 }
 

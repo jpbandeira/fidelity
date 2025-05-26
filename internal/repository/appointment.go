@@ -76,17 +76,27 @@ func (db *GormRepository) CreateAppointment(appt domain.Appointment) (domain.App
 		}
 
 		for _, s := range modelAppointment.Services {
-			csc, err := db.getClientServiceCount(tx, appt.Client.ID, s.ServiceTypeID)
+			serviceSummary, err := db.getServiceSummary(tx, appt.Client.ID, s.ServiceTypeID)
 			if err != nil && err != ferros.ErrNotFound {
 				return err
 			}
 
-			if csc.ClientUUID != "" {
-				if err := db.updateClientServiceCount(tx, csc); err != nil {
+			if serviceSummary.ClientUUID != "" {
+				serviceSummary.Count = serviceSummary.Count + 1
+				serviceSummary.TotalPrice = serviceSummary.TotalPrice + s.Price
+
+				if err := db.updateServiceSummary(tx, serviceSummary); err != nil {
 					return err
 				}
 			} else {
-				if err := db.createClientServiceCount(tx, s.ServiceTypeID, appt.Client.ID); err != nil {
+				serviceSummary := model.ServiceSummary{
+					ServiceTypeID: s.ServiceTypeID,
+					ClientUUID:    modelAppointment.ClientUUID,
+					Count:         1,
+					TotalPrice:    s.Price,
+				}
+				err := db.createServiceSummary(tx, serviceSummary)
+				if err != nil {
 					return err
 				}
 			}
@@ -102,7 +112,7 @@ func (db *GormRepository) CreateAppointment(appt domain.Appointment) (domain.App
 }
 
 func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.ClientServiceTypeCount, error) {
-	clientServicesCount := []model.ClientServiceTypeCount{}
+	clientServicesCount := []model.ServiceSummary{}
 	err := db.Preload("Client").Preload("ServiceType").Where("client_uuid = ?", cliendUUID).Find(&clientServicesCount).Error
 	if err != nil {
 		return []domain.ClientServiceTypeCount{}, err
@@ -116,26 +126,25 @@ func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.Cl
 	return result, nil
 }
 
-func (db *GormRepository) getClientServiceCount(tx *gorm.DB, cliendUUID string, serviceTypeID uint) (model.ClientServiceTypeCount, error) {
-	clientServiceCount := model.ClientServiceTypeCount{}
-	err := tx.Where("client_uuid = ? AND service_type_id = ?", cliendUUID, serviceTypeID).Find(&clientServiceCount).Error
+func (db *GormRepository) getServiceSummary(tx *gorm.DB, cliendUUID string, serviceTypeID uint) (model.ServiceSummary, error) {
+	serviceSummary := model.ServiceSummary{}
+	err := tx.Where("client_uuid = ? AND service_type_id = ?", cliendUUID, serviceTypeID).Find(&serviceSummary).Error
 	if err != nil {
-		return model.ClientServiceTypeCount{}, err
+		return model.ServiceSummary{}, err
 	}
-	if clientServiceCount.ClientUUID == "" {
-		return model.ClientServiceTypeCount{}, ferros.ErrNotFound
+	if serviceSummary.ClientUUID == "" {
+		return model.ServiceSummary{}, ferros.ErrNotFound
 	}
 
-	return clientServiceCount, nil
+	return serviceSummary, nil
 }
 
-func (db *GormRepository) updateClientServiceCount(tx *gorm.DB, clientServiceCount model.ClientServiceTypeCount) error {
-	clientServiceCount.ServiceCount = clientServiceCount.ServiceCount + 1
+func (db *GormRepository) updateServiceSummary(tx *gorm.DB, serviceSummary model.ServiceSummary) error {
 	err := tx.
 		Session(&gorm.Session{FullSaveAssociations: true}).
 		Select("*").
-		Where("client_uuid = ? AND service_type_id = ?", clientServiceCount.ClientUUID, clientServiceCount.ServiceTypeID).
-		Updates(&clientServiceCount).Error
+		Where("client_uuid = ? AND service_type_id = ?", serviceSummary.ClientUUID, serviceSummary.ServiceTypeID).
+		Updates(&serviceSummary).Error
 	if err != nil {
 		return err
 	}
@@ -143,14 +152,8 @@ func (db *GormRepository) updateClientServiceCount(tx *gorm.DB, clientServiceCou
 	return nil
 }
 
-func (db *GormRepository) createClientServiceCount(tx *gorm.DB, serviceTypeID uint, clientUUID string) error {
-	clientServiceCountModel := model.ClientServiceTypeCount{
-		ServiceTypeID: serviceTypeID,
-		ClientUUID:    clientUUID,
-		ServiceCount:  1,
-	}
-
-	err := tx.Create(&clientServiceCountModel).Error
+func (db *GormRepository) createServiceSummary(tx *gorm.DB, serviceSummary model.ServiceSummary) error {
+	err := tx.Create(&serviceSummary).Error
 	if err != nil {
 		return err
 	}
