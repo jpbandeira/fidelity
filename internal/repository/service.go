@@ -8,50 +8,66 @@ import (
 	"gorm.io/gorm"
 )
 
-func (db *GormRepository) CreateService(service domain.Service) (domain.Service, error) {
-	var serviceModel model.Service
-
+func (db *GormRepository) CreateServiceBatch(serviceBatch domain.ServiceBatch) (domain.ServiceBatch, error) {
+	var serviceModelList = make([]model.Service, 0)
 	err := db.Transaction(func(tx *gorm.DB) (err error) {
-		serviceType, err := db.getServiceType(tx, service.ServiceType)
+		for _, s := range serviceBatch.Items {
+			serviceType, err := db.getServiceType(tx, s.ServiceType)
+			if err != nil {
+				return err
+			}
+
+			serviceModel := model.Service{
+				UUID:          uuid.NewString(),
+				ClientUUID:    serviceBatch.Client.ID,
+				Client:        model.ClientDomainToRepo(serviceBatch.Client),
+				AttedantUUID:  serviceBatch.Attendant.ID,
+				Attendant:     model.AttendantDomainToRepo(serviceBatch.Attendant),
+				Price:         s.Price,
+				ServiceTypeID: serviceType.ID,
+				ServiceType:   serviceType,
+				PaymentType:   domain.ToPaymentType(s.PaymentType),
+				Description:   s.Description,
+				ServiceDate:   s.ServiceDate,
+			}
+
+			serviceModelList = append(serviceModelList, serviceModel)
+		}
+
+		err = db.Create(&serviceModelList).Error
 		if err != nil {
 			return err
 		}
 
-		serviceModel = model.Service{
-			UUID:          uuid.NewString(),
-			ClientUUID:    service.Client.ID,
-			Client:        model.ClientDomainToRepo(service.Client),
-			AttedantUUID:  service.Attendant.ID,
-			Attendant:     model.AttendantDomainToRepo(service.Attendant),
-			Price:         service.Price,
-			ServiceTypeID: serviceType.ID,
-			ServiceType:   serviceType,
-			PaymentType:   domain.ToPaymentType(service.PaymentType),
-			Description:   service.Description,
-			ServiceDate:   service.ServiceDate,
+		for _, s := range serviceModelList {
+			clientServiceCount, cscErr := db.getClientServiceCount(tx, s.Client.UUID, s.ServiceTypeID)
+			if cscErr != nil && cscErr != ferros.ErrNotFound {
+				return cscErr
+			}
+
+			if clientServiceCount.ClientUUID != "" {
+				return db.updateClientServiceCount(tx, clientServiceCount)
+			}
+
+			err := db.createClientServiceCount(tx, s.ServiceTypeID, serviceBatch.Client.ID)
+			if err != nil {
+				return err
+			}
 		}
 
-		err = db.Create(&serviceModel).Error
-		if err != nil {
-			return err
-		}
-
-		clientServiceCount, cscErr := db.getClientServiceCount(tx, serviceModel.ClientUUID, serviceModel.ServiceTypeID)
-		if cscErr != nil && cscErr != ferros.ErrNotFound {
-			return cscErr
-		}
-
-		if clientServiceCount.ClientUUID != "" {
-			return db.updateClientServiceCount(tx, clientServiceCount)
-		}
-
-		return db.createClientServiceCount(tx, serviceModel.ServiceTypeID, serviceModel.ClientUUID)
+		return nil
 	})
 	if err != nil {
-		return domain.Service{}, err
+		return domain.ServiceBatch{}, err
 	}
 
-	return serviceModel.RepoToDomain(), nil
+	client := serviceModelList[0].Client
+	attendant := serviceModelList[0].Attendant
+	return domain.ServiceBatch{
+		Client:    client.RepoToDomain(),
+		Attendant: attendant.RepoToDomain(),
+		Items:     model.ServiceRepoToDomain(serviceModelList),
+	}, nil
 }
 
 func (db *GormRepository) getServiceType(tx *gorm.DB, serviceType string) (model.ServiceType, error) {
@@ -124,28 +140,26 @@ func (db *GormRepository) GetClientServicesCount(cliendUUID string) ([]domain.Cl
 	return result, nil
 }
 
-func (db *GormRepository) ListServicesByClient(clientID string, params []domain.Param) ([]domain.Service, error) {
+func (db *GormRepository) ListServices(params []domain.Param) (domain.ServiceBatch, error) {
 	var services []model.Service
 	var q string
-	var args []interface{}
+	var args []any
 
 	for _, v := range params {
 		q = q + v.Key + " = ?"
 		args = append(args, v.Value)
 	}
 
-	q = q + "client_uuid" + " = ?"
-	args = append(args, clientID)
-
 	err := db.Preload("Client").Preload("Attendant").Preload("ServiceType").Where(q, args...).Order("service_date DESC").Find(&services).Error
 	if err != nil {
-		return []domain.Service{}, err
+		return domain.ServiceBatch{}, err
 	}
 
-	var result []domain.Service
-	for _, s := range services {
-		result = append(result, s.RepoToDomain())
-	}
-
-	return result, nil
+	client := services[0].Client
+	attendant := services[0].Attendant
+	return domain.ServiceBatch{
+		Client:    client.RepoToDomain(),
+		Attendant: attendant.RepoToDomain(),
+		Items:     model.ServiceRepoToDomain(services),
+	}, nil
 }

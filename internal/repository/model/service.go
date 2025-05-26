@@ -42,17 +42,20 @@ type ClientServiceTypeCount struct {
 	ServiceCount int `gorm:"not null"`
 }
 
-func (s Service) RepoToDomain() domain.Service {
-	return domain.Service{
-		ID:          s.UUID,
-		Client:      s.Client.RepoToDomain(),
-		Attendant:   s.Attendant.RepoToDomain(),
-		Price:       s.Price,
-		ServiceType: s.ServiceType.Description,
-		PaymentType: s.PaymentType.String(),
-		Description: s.Description,
-		ServiceDate: s.ServiceDate,
+func ServiceRepoToDomain(services []Service) []domain.Service {
+	var serviceList = make([]domain.Service, 0)
+	for _, s := range services {
+		serviceList = append(serviceList, domain.Service{
+			ID:          s.UUID,
+			Price:       s.Price,
+			ServiceType: s.ServiceType.Description,
+			PaymentType: s.PaymentType.String(),
+			Description: s.Description,
+			ServiceDate: s.ServiceDate,
+		})
 	}
+
+	return serviceList
 }
 
 func (csc ClientServiceTypeCount) RepoToDomain() domain.ClientServiceTypeCount {

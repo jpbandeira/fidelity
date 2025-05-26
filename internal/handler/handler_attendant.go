@@ -11,7 +11,7 @@ import (
 	ferros "github.com/jp/fidelity/internal/pkg/errors"
 )
 
-func attendantAPIToDomain(c dto.Attendant) domain.Attendant {
+func attendantDTOToDomain(c dto.Attendant) domain.Attendant {
 	return domain.Attendant{
 		ID:    c.ID,
 		Name:  c.Name,
@@ -20,7 +20,7 @@ func attendantAPIToDomain(c dto.Attendant) domain.Attendant {
 	}
 }
 
-func attendantDomainToAPI(c domain.Attendant) dto.Attendant {
+func attendantDomainToDTO(c domain.Attendant) dto.Attendant {
 	return dto.Attendant{
 		ID:    c.ID,
 		Name:  c.Name,
@@ -39,14 +39,14 @@ func (h *handler) createAttendant(c *gin.Context) {
 		return
 	}
 
-	attendant, err := h.actions.CreateAttendant(attendantAPIToDomain(attendantAPI))
+	attendant, err := h.actions.CreateAttendant(attendantDTOToDomain(attendantAPI))
 	if err != nil {
 		httpError := newHandlerEror(err)
 		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
-	c.JSON(http.StatusCreated, attendantDomainToAPI(attendant))
+	c.JSON(http.StatusCreated, attendantDomainToDTO(attendant))
 }
 
 // updateAttendant - Update a Attendant
@@ -59,14 +59,14 @@ func (h *handler) updateAttendant(c *gin.Context) {
 		return
 	}
 
-	attendant, err := h.actions.UpdateAttendant(attendantAPIToDomain(attendantAPI))
+	attendant, err := h.actions.UpdateAttendant(attendantDTOToDomain(attendantAPI))
 	if err != nil {
 		httpError := newHandlerEror(err)
 		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
-	c.JSON(http.StatusOK, attendantDomainToAPI(attendant))
+	c.JSON(http.StatusOK, attendantDomainToDTO(attendant))
 }
 
 // listAttendant - List a list of Attendant
@@ -87,7 +87,7 @@ func (h *handler) listAttendant(c *gin.Context) {
 
 	var result = make([]dto.Attendant, 0)
 	for _, att := range attendants {
-		result = append(result, attendantDomainToAPI(att))
+		result = append(result, attendantDomainToDTO(att))
 	}
 
 	c.JSON(http.StatusOK, result)

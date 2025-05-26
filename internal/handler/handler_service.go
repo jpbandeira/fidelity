@@ -1,33 +1,36 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
 	"github.com/jp/fidelity/internal/pkg/dto"
 )
 
-func serviceAPIToDomain(s dto.Service) domain.Service {
-	return domain.Service{
-		ID:          s.ID,
-		Client:      clientDTOToDomain(s.Client),
-		Attendant:   attendantAPIToDomain(s.Attendant),
-		Price:       s.Price,
-		ServiceType: s.ServiceType,
-		PaymentType: s.PaymentType,
-		Description: s.Description,
-		ServiceDate: s.ServiceDate,
+func serviceBatchDTOToDomain(s dto.ServiceBatch) domain.ServiceBatch {
+	var services = make([]domain.Service, 0)
+	for _, v := range s.Items {
+		services = append(services, domain.Service{
+			ID:          v.ID,
+			Price:       v.Price,
+			ServiceType: v.ServiceType,
+			PaymentType: v.PaymentType,
+			Description: v.Description,
+			ServiceDate: v.ServiceDate,
+		})
+	}
+
+	return domain.ServiceBatch{
+		Client:    clientDTOToDomain(s.Client),
+		Attendant: attendantDTOToDomain(s.Attendant),
+		Items:     services,
 	}
 }
 
-func servicecDomainToAPI(s domain.Service) dto.Service {
+func serviceDomainToDTO(s domain.Service) dto.Service {
 	return dto.Service{
 		ID:          s.ID,
-		Client:      clientDomainToDTO(s.Client),
-		Attendant:   attendantDomainToAPI(s.Attendant),
 		Price:       s.Price,
 		ServiceType: s.ServiceType,
 		PaymentType: s.PaymentType,
@@ -36,58 +39,60 @@ func servicecDomainToAPI(s domain.Service) dto.Service {
 	}
 }
 
-func serviceTypesCountDomainToAPI(csc domain.ClientServiceTypeCount) dto.ServiceTypeCount {
+func serviceTypesCountDomainToDTO(csc domain.ClientServiceTypeCount) dto.ServiceTypeCount {
 	return dto.ServiceTypeCount{
 		ServiceType: csc.ServiceType.Description,
 		Count:       csc.Count,
 	}
 }
 
-func servicecDomainToAPIList(sList []domain.Service, cscList []domain.ClientServiceTypeCount) dto.ServiceList {
-	var serviceList = make([]dto.Service, 0)
-	for _, s := range sList {
-		serviceList = append(serviceList, servicecDomainToAPI(s))
+func serviceBatchDomainToDTO(sBatch domain.ServiceBatch) dto.ServiceBatch {
+	var services = make([]dto.Service, 0)
+	for _, s := range sBatch.Items {
+		services = append(services, serviceDomainToDTO(s))
 	}
 
+	return dto.ServiceBatch{
+		Client:    clientDomainToDTO(sBatch.Client),
+		Attendant: attendantDomainToDTO(sBatch.Attendant),
+		Items:     services,
+	}
+}
+
+func serviceBatchToServiceListDTO(sBatch dto.ServiceBatch, csTcList []domain.ClientServiceTypeCount) dto.ServiceList {
 	var serviceTypesCount = make([]dto.ServiceTypeCount, 0)
-	for _, csc := range cscList {
-		serviceTypesCount = append(serviceTypesCount, serviceTypesCountDomainToAPI(csc))
+	for _, csc := range csTcList {
+		serviceTypesCount = append(serviceTypesCount, serviceTypesCountDomainToDTO(csc))
 	}
 
 	return dto.ServiceList{
-		Items:             serviceList,
+		Item:              sBatch,
 		ServiceTypesCount: serviceTypesCount,
 	}
 }
 
-// createService - Create a Service
-func (h *handler) createService(c *gin.Context) {
-	var serviceAPI dto.Service
+// createServiceBatch - Create a Service
+func (h *handler) createServiceBatch(c *gin.Context) {
+	var serviceBatchDTO dto.ServiceBatch
 
-	err := c.BindJSON(&serviceAPI)
+	err := c.BindJSON(&serviceBatchDTO)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, err.Error())
 		return
 	}
 
-	service, err := h.actions.CreateService(serviceAPIToDomain(serviceAPI))
+	serviceBatch, err := h.actions.CreateServiceBatch(serviceBatchDTOToDomain(serviceBatchDTO))
 	if err != nil {
 		httpError := newHandlerEror(err)
 		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
-	c.JSON(http.StatusCreated, servicecDomainToAPI(service))
+	c.JSON(http.StatusCreated, serviceBatchDomainToDTO(serviceBatch))
 }
 
-// listClientServices - List the client Services
-func (h *handler) listClientServices(c *gin.Context) {
-	clientID := c.Param(idParam)
-	if len(strings.TrimSpace(clientID)) == 0 {
-		c.JSON(http.StatusBadRequest, fmt.Errorf("empty client id"))
-		return
-	}
-
+// listServices - List Services
+func (h *handler) listServices(c *gin.Context) {
 	qps := []domain.Param{}
 	for key, value := range c.Request.URL.Query() {
 		for _, v := range value {
@@ -95,19 +100,21 @@ func (h *handler) listClientServices(c *gin.Context) {
 		}
 	}
 
-	services, err := h.actions.ListServicesByClient(clientID, qps)
+	serviceBatchDomain, err := h.actions.ListServices(qps)
 	if err != nil {
 		httpError := newHandlerEror(err)
 		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
-	countOfServiceTypes, err := h.actions.GetClientServicesCount(clientID)
+	serviceBatch := serviceBatchDomainToDTO(serviceBatchDomain)
+
+	countOfServiceTypes, err := h.actions.GetClientServicesCount(serviceBatch.Client.ID)
 	if err != nil {
 		httpError := newHandlerEror(err)
 		c.JSON(httpError.StatusCode, httpError)
 		return
 	}
 
-	c.JSON(http.StatusOK, servicecDomainToAPIList(services, countOfServiceTypes))
+	c.JSON(http.StatusOK, serviceBatchToServiceListDTO(serviceBatch, countOfServiceTypes))
 }

@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jp/fidelity/internal/domain"
 	"github.com/jp/fidelity/internal/pkg/dto"
+	ferros "github.com/jp/fidelity/internal/pkg/errors"
 )
 
 func clientDTOToDomain(c dto.Client) domain.Client {
@@ -96,7 +96,11 @@ func (h *handler) listClient(c *gin.Context) {
 func (h *handler) deleteCLient(c *gin.Context) {
 	id := c.Param(idParam)
 	if len(strings.TrimSpace(id)) == 0 {
-		c.JSON(http.StatusBadRequest, fmt.Errorf("empty id"))
+		c.JSON(http.StatusBadRequest, HandlerError{
+			Msg:        "empty client id",
+			ErrorType:  ferros.ErrInvalidParameter.Error(),
+			StatusCode: http.StatusBadRequest,
+		})
 		return
 	}
 

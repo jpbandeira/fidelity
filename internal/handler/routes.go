@@ -82,16 +82,16 @@ func (h *handler) attendantRoutes() Routes {
 func (h *handler) serviceRoutes() Routes {
 	return Routes{
 		{
-			Name:        "CreateService",
+			Name:        "CreateServiceInBatch",
 			Method:      http.MethodPost,
 			Pattern:     serviceEP,
-			HandlerFunc: h.createService,
+			HandlerFunc: h.createServiceBatch,
 		},
 		{
-			Name:        "ListClientServices",
+			Name:        "ListServices",
 			Method:      http.MethodGet,
-			Pattern:     clientServicesRP,
-			HandlerFunc: h.listClientServices,
+			Pattern:     serviceEP,
+			HandlerFunc: h.listServices,
 		},
 	}
 }
