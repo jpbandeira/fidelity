@@ -4,9 +4,6 @@ kind: Kustomization
 namespace: fidelity
 
 resources:
-  - namespace.yaml              # cria namespace fidelity
-  - postgres-pvc.yaml           # PVC para persistência do Postgres
-  - postgres-deployment.yaml    # Deployment do Postgres
-  - fidelity-deployment.yaml    # Deployment do backend fidelity
-  - fidelity-service.yaml       # Service para backend
-  - postgres-service.yaml       # Service para Postgres (se usar)
+  - namespace.yaml
+  - deployment.yaml
+  - service.yaml

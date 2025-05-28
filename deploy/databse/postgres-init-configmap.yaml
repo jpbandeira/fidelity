@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init-scripts
+  namespace: database
+data:
+  init-authentication-db.sql: |
+    CREATE DATABASE authentication_db OWNER fidelity;
+  init-fidelity-db.sql: |
+    CREATE DATABASE fidelity_db OWNER fidelity;

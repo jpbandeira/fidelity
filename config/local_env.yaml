@@ -6,9 +6,9 @@ platform: "local-env"
 database_type: "postgres"
 
 postgres:
-  host: "postgres"
+  host: postgres.database.svc.cluster.local
   port: "5432"
-  database: "fidelity"
+  database: "fidelity_db"
   username: "fidelity"
   password: "suaSenhaSeguraAqui"
   sslmode: "disable"

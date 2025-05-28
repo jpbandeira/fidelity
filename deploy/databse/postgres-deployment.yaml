@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: postgres
-  namespace: fidelity
+  namespace: database
 spec:
   replicas: 1
   selector:
@@ -18,20 +18,23 @@ spec:
         image: postgres:15.2-alpine
         env:
         - name: POSTGRES_USER
-          value: "fidelity"          # valor fixo aqui
-        - name: POSTGRES_DB
-          value: "fidelity"          # valor fixo aqui
+          value: "fidelity"
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
               name: postgres-secret
-              key: POSTGRES_PASSWORD
+              key: password
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: postgres-storage
+        - mountPath: /docker-entrypoint-initdb.d/
+          name: init-script
         ports:
         - containerPort: 5432
       volumes:
-        - name: postgres-storage
-          persistentVolumeClaim:
-            claimName: postgres-pvc
+      - name: postgres-storage
+        persistentVolumeClaim:
+          claimName: postgres-pvc
+      - name: init-script
+        configMap:
+          name: postgres-init-scripts

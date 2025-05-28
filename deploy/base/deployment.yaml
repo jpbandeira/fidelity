@@ -20,7 +20,7 @@ spec:
     spec:
       containers:
         - name: fidelity
-          image: fidelity:20250526-1658
+          image: fidelity:20250528-0006
           imagePullPolicy: Never
           command: ["./fidelity"]
           args: ["--configpath", "/app/config/local_env.yaml"]
