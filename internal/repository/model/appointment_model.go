@@ -14,8 +14,7 @@ type Appointment struct {
 	ClientUUID string `gorm:"not null;index"`
 	Client     Client `gorm:"foreignKey:ClientUUID;references:UUID;constraint:OnDelete:CASCADE;"`
 
-	AttendantUUID string    `gorm:"not null;index"`
-	Attendant     Attendant `gorm:"foreignKey:AttendantUUID;references:UUID;constraint:OnDelete:CASCADE;"`
+	AttendantUUID string `gorm:"not null;index"`
 
 	Services []Service `gorm:"foreignKey:AppointmentUUID;references:UUID;constraint:OnDelete:CASCADE;"`
 }
@@ -61,7 +60,6 @@ func ServiceRepoToDomain(services []Service) []domain.Service {
 			Description: s.Description,
 			ServiceDate: s.ServiceDate,
 			Client:      s.Appointment.Client.RepoToDomain(),
-			Attendant:   s.Appointment.Attendant.RepoToDomain(),
 		})
 	}
 	return serviceList
@@ -89,14 +87,12 @@ func (a Appointment) RepoToDomain() domain.Appointment {
 			Description: s.Description,
 			ServiceDate: s.ServiceDate,
 			Client:      a.Client.RepoToDomain(),
-			Attendant:   a.Attendant.RepoToDomain(),
 		})
 	}
 
 	return domain.Appointment{
-		ID:        a.UUID,
-		Client:    a.Client.RepoToDomain(),
-		Attendant: a.Attendant.RepoToDomain(),
-		Services:  services,
+		ID:       a.UUID,
+		Client:   a.Client.RepoToDomain(),
+		Services: services,
 	}
 }

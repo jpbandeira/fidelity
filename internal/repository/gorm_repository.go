@@ -34,7 +34,6 @@ func databaseModels() []any {
 		model.Service{},
 		model.Appointment{},
 		model.Client{},
-		model.Attendant{},
 	}
 }
 

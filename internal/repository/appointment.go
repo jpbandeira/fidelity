@@ -45,9 +45,8 @@ func (db *GormRepository) CreateAppointment(appt domain.Appointment) (domain.App
 	modelAppointment := model.Appointment{
 		UUID:          apptUUID,
 		ClientUUID:    appt.Client.ID,
-		AttendantUUID: appt.Attendant.ID,
 		Client:        model.ClientDomainToRepo(appt.Client),
-		Attendant:     model.AttendantDomainToRepo(appt.Attendant),
+		AttendantUUID: appt.AttendantID,
 	}
 
 	services := make([]model.Service, 0, len(appt.Services))

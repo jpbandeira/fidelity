@@ -12,16 +12,15 @@ func servicesDomainToServicesDTO(servicesDomain []domain.Service) []dto.Service 
 	var services = make([]dto.Service, 0)
 	for _, s := range servicesDomain {
 		services = append(services, dto.Service{
-			ID:            s.ID,
-			Name:          s.Name,
-			Price:         s.Price,
-			PaymentType:   s.PaymentType,
-			Description:   s.Description,
-			ServiceDate:   s.ServiceDate,
-			ClientID:      s.Client.ID,
-			ClientName:    s.Client.Name,
-			AttendantID:   s.Attendant.ID,
-			AttendantName: s.Attendant.Name,
+			ID:          s.ID,
+			Name:        s.Name,
+			Price:       s.Price,
+			PaymentType: s.PaymentType,
+			Description: s.Description,
+			ServiceDate: s.ServiceDate,
+			ClientID:    s.Client.ID,
+			ClientName:  s.Client.Name,
+			AttendantID: s.AttendantID,
 		})
 	}
 
@@ -58,10 +57,7 @@ func dtoToDomainAppointment(appt dto.Appointment) domain.Appointment {
 				ID:   s.ClientID,
 				Name: s.ClientName,
 			},
-			Attendant: domain.Attendant{
-				ID:   s.AttendantID,
-				Name: s.AttendantName,
-			},
+			AttendantID: s.AttendantID,
 		})
 	}
 
@@ -71,11 +67,8 @@ func dtoToDomainAppointment(appt dto.Appointment) domain.Appointment {
 			ID:   appt.Client.ID,
 			Name: appt.Client.Name,
 		},
-		Attendant: domain.Attendant{
-			ID:   appt.Attendant.ID,
-			Name: appt.Attendant.Name,
-		},
-		Services: services,
+		AttendantID: appt.AttendantID,
+		Services:    services,
 	}
 }
 
@@ -100,13 +93,8 @@ func domainToDTOAppointment(appt domain.Appointment) dto.Appointment {
 			Email: appt.Client.Email,
 			Phone: appt.Client.Phone,
 		},
-		Attendant: dto.Attendant{
-			ID:    appt.Attendant.ID,
-			Name:  appt.Attendant.Name,
-			Email: appt.Attendant.Email,
-			Phone: appt.Attendant.Phone,
-		},
-		Services: services,
+		AttendantID: appt.AttendantID,
+		Services:    services,
 	}
 }
 

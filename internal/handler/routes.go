@@ -50,35 +50,6 @@ func (h *handler) clientRoutes() Routes {
 	}
 }
 
-func (h *handler) attendantRoutes() Routes {
-	return Routes{
-		{
-			Name:        "CreateAttendant",
-			Method:      http.MethodPost,
-			Pattern:     attendantEP,
-			HandlerFunc: h.createAttendant,
-		},
-		{
-			Name:        "UpdateAttendant",
-			Method:      http.MethodPut,
-			Pattern:     attendantEP,
-			HandlerFunc: h.updateAttendant,
-		},
-		{
-			Name:        "ListAttendant",
-			Method:      http.MethodGet,
-			Pattern:     attendantEP,
-			HandlerFunc: h.listAttendant,
-		},
-		{
-			Name:        "DeleteAttendant",
-			Method:      http.MethodDelete,
-			Pattern:     singleAttendantEP,
-			HandlerFunc: h.deleteAttendant,
-		},
-	}
-}
-
 func (h *handler) serviceRoutes() Routes {
 	return Routes{
 		{
@@ -128,7 +99,6 @@ func (h *handler) healthRoutes() Routes {
 func (h *handler) Routes() Routes {
 	rts := Routes{}
 	rts = append(rts, h.clientRoutes()...)
-	rts = append(rts, h.attendantRoutes()...)
 	rts = append(rts, h.serviceRoutes()...)
 	rts = append(rts, h.serviceTypeRoutes()...)
 	rts = append(rts, h.healthRoutes()...)

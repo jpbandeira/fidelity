@@ -8,10 +8,10 @@ import (
 )
 
 type Appointment struct {
-	ID        string
-	Client    Client
-	Attendant Attendant
-	Services  []Service
+	ID          string
+	Client      Client
+	AttendantID string
+	Services    []Service
 }
 
 type Service struct {
@@ -22,7 +22,7 @@ type Service struct {
 	Description string
 	ServiceDate time.Time
 	Client      Client
-	Attendant   Attendant
+	AttendantID string
 }
 
 type ServiceSummary struct {
@@ -41,15 +41,15 @@ func validateAppointment(appointment Appointment) error {
 		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.IdField,
 			Msg:    ferros.EmptyErrorString,
-			Entity: ClientEntity,
+			Entity: AppointmentEntity,
 		})
 	}
 
-	if appointment.Attendant.ID == "" {
+	if appointment.AttendantID == "" {
 		return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 			Field:  ferros.IdField,
 			Msg:    ferros.EmptyErrorString,
-			Entity: AttendantEntity,
+			Entity: AppointmentEntity,
 		})
 	}
 
@@ -107,13 +107,9 @@ func (a *actions) CreateAppointment(appt Appointment) (Appointment, error) {
 		return Appointment{}, err
 	}
 
-	attendant, err := a.db.GetAttendant(appt.Attendant.ID)
-	if err != nil {
-		return Appointment{}, err
-	}
+	// Add validação de usuário aqui
 
 	appt.Client = client
-	appt.Attendant = attendant
 	return a.db.CreateAppointment(appt)
 }
 
