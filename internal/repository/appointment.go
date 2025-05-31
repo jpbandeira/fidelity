@@ -24,7 +24,7 @@ func (db *GormRepository) ListServices(params []domain.Param) ([]domain.Service,
 	err := db.
 		Joins("JOIN appointments ON appointments.uuid = services.appointment_uuid").
 		Preload("Appointment.Client").
-		Preload("Appointment.Attendant").
+		Preload("Appointment").
 		Preload("ServiceType").
 		Where(q, args...).
 		Order("service_date DESC").

@@ -60,6 +60,7 @@ func ServiceRepoToDomain(services []Service) []domain.Service {
 			Description: s.Description,
 			ServiceDate: s.ServiceDate,
 			Client:      s.Appointment.Client.RepoToDomain(),
+			AttendantID: s.AppointmentUUID,
 		})
 	}
 	return serviceList
