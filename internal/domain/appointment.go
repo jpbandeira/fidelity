@@ -71,6 +71,16 @@ func validateAppointment(appointment Appointment) error {
 		}
 
 		if a.ServiceDate.String() == "" {
+			dateOnly, err := time.Parse("2006-01-02", a.ServiceDate.String())
+			if err != nil {
+				return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
+					Field:  ferros.DateField,
+					Msg:    "failed to format service date",
+					Entity: AppointmentEntity,
+				})
+			}
+			a.ServiceDate = dateOnly
+
 			return fmt.Errorf(ferros.ErrFormatString, ferros.ErrInvalidParameter, &ferros.ValidationError{
 				Field:  ferros.DateField,
 				Msg:    ferros.EmptyErrorString,
